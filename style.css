@@ -1,0 +1,203 @@
+*{box-sizing:border-box;margin:0}
+:root{--bg:#07080c;--pn:#0d0f15;--ln:#262a35;--tx:#e8eaf0;--mu:#7c8396;--ac:#ffcf3f}
+html,body{height:100%;overflow:hidden;color:var(--tx);font-family:"Noto Sans KR",system-ui,sans-serif;background:var(--bg);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;width:100%;height:100%}
+button{font-family:inherit;cursor:pointer;color:inherit}
+#hud{position:fixed;display:flex;gap:6px;z-index:2;transition:opacity .4s}
+body.m #hud{opacity:0;pointer-events:none}
+.p{flex:1;min-width:0;position:relative;background:linear-gradient(180deg,rgba(13,15,21,.94),rgba(13,15,21,.8));border-top:2px solid var(--c);padding:6px 8px 7px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
+.p.r{clip-path:polygon(0 0,100% 0,100% 100%,8px 100%,0 calc(100% - 8px))}
+.p.dead{opacity:.35;filter:grayscale(1)}
+.hd{display:flex;align-items:center;gap:7px}
+.p.r .hd{flex-direction:row-reverse}
+.p .ic{width:28px;height:28px;flex:none}
+.nm{flex:1;min-width:0;display:flex;align-items:baseline;justify-content:space-between;gap:4px}
+.p.r .nm{flex-direction:row-reverse}
+.nm b{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm em{font:400 17px "Russo One",sans-serif;font-style:normal;color:#fff}
+.bar{position:relative;height:8px;margin-top:5px;background:#1a1d26;overflow:hidden;transform:skewX(-20deg)}
+.p.r .bar{transform:skewX(20deg)}
+.bar u,.bar i{position:absolute;left:0;top:0;bottom:0;width:100%}
+.p.r .bar u,.p.r .bar i{left:auto;right:0}
+.bar u{background:#fff}
+.bar i{background:linear-gradient(90deg,var(--c),var(--h))}
+.p.r .bar i{background:linear-gradient(270deg,var(--c),var(--h))}
+.bar.hit{animation:hb .25s}
+@keyframes hb{30%{filter:brightness(2.2)}}
+.rw{display:flex;align-items:center;gap:6px;margin-top:5px}
+.p.r .rw{flex-direction:row-reverse}
+.ug{position:relative;flex:1;height:3px;background:#1a1d26;overflow:hidden}
+.ug i{position:absolute;left:0;top:0;bottom:0;width:0;background:#8f96a8}
+.p.r .ug i{left:auto;right:0}
+.ug.full i{background:var(--ac);box-shadow:0 0 8px var(--ac);animation:up .45s ease-in-out infinite alternate}
+@keyframes up{to{opacity:.45}}
+.sk{display:flex;gap:3px}
+.chip{position:relative;width:15px;height:15px;overflow:hidden;background:#1a1d26;border:1px solid var(--ln);font:400 8px "Russo One",sans-serif;display:grid;place-items:center;color:#aab1c3}
+.chip s{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(0,0,0,.7)}
+.chip span{position:relative}
+.chip.u{width:26px;color:var(--ac);border-color:#4a3d12}
+.chip.rdy{background:var(--ac);color:#0b0d12;border-color:var(--ac)}
+#msg{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:radial-gradient(circle,rgba(7,8,12,.55),rgba(7,8,12,.92));z-index:6}
+#msg.on{display:flex;animation:fi .45s}
+@keyframes fi{from{opacity:0}}
+#mt{text-align:center;font:400 clamp(34px,10vw,58px) "Black Han Sans",sans-serif;animation:pop .6s cubic-bezier(.2,1.5,.4,1)}
+#mt small{display:block;font:400 12px "Russo One",sans-serif;letter-spacing:.6em;color:var(--mu);margin-bottom:10px}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.btns{display:flex;gap:10px}
+.btn{font:400 14px "Russo One","Noto Sans KR",sans-serif;letter-spacing:.1em;padding:14px 22px;border:1px solid var(--ln);background:#11141b;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);transition:transform .12s,background .15s}
+.btn.pri{background:var(--ac);color:#0b0d12;border-color:var(--ac)}
+.btn:active{transform:scale(.97)}
+#ctl{position:fixed;left:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:6px;z-index:7}
+body.m #ctl{display:none}
+#ctl button{height:38px;padding:0 14px;border:1px solid var(--ln);background:#0d0f15;font:400 12px "Russo One","Noto Sans KR",sans-serif;letter-spacing:.08em;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+#ctl #bskip{color:var(--ac);border-color:#4a3d12}
+#cfm{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(4,5,8,.7);z-index:9}
+#cfm.on{display:flex;animation:fi .2s}
+.cbox{background:#0d0f15;border:1px solid var(--ln);border-top:2px solid var(--ac);padding:22px 20px 18px;text-align:center;min-width:260px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%)}
+.cbox b{display:block;font:400 22px "Black Han Sans",sans-serif}
+.cbox small{display:block;font-size:12px;color:var(--mu);margin:8px 0 18px}
+#snd{position:fixed;right:12px;bottom:max(12px,env(safe-area-inset-bottom));width:38px;height:38px;border:1px solid var(--ln);background:#0d0f15;font-size:15px;z-index:7;padding:0;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+#menu{position:fixed;inset:0;display:none;flex-direction:column;gap:12px;padding:max(16px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom));max-width:760px;margin:0 auto;z-index:4}
+#menu.on{display:flex;animation:fi .4s}
+header{text-align:center;padding-top:6px}
+.logo{font:400 clamp(30px,9.4vw,52px) "Russo One",sans-serif;letter-spacing:.03em;line-height:.95;color:#fff;text-shadow:0 0 30px rgba(255,207,63,.25)}
+.logo span{color:var(--ac)}
+.logo em{font-style:normal;color:var(--ac);display:inline-block;transform:skewX(-10deg)}
+.logo:after{content:"";display:block;height:2px;margin:10px auto 0;width:min(260px,60%);background:linear-gradient(90deg,transparent,var(--ac),transparent);animation:sw 3s ease-in-out infinite}
+@keyframes sw{50%{opacity:.35;transform:scaleX(.6)}}
+.sub{font:400 10px "Russo One",sans-serif;letter-spacing:.6em;color:var(--mu);margin-top:8px}
+#mode{display:flex;justify-content:center}
+#mode button{font:400 13px "Russo One",sans-serif;letter-spacing:.1em;padding:9px 18px;background:#0d0f15;border:1px solid var(--ln);color:var(--mu)}
+#mode button:first-child{clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px)}
+#mode button:last-child{clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
+#mode button.on{background:var(--ac);color:#0b0d12;border-color:var(--ac)}
+#slots{display:flex;align-items:stretch;gap:6px}
+.slot{flex:1;min-width:0;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(13,15,21,.92) 40%);border:1px solid var(--ln);border-top:2px solid var(--c);padding:10px 6px 12px;text-align:center;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);transition:transform .2s,background .2s}
+.slot::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,var(--c),transparent 65%);opacity:.18;pointer-events:none}
+.slot.on{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(13,15,21,.92) 45%);transform:translateY(-3px)}
+.slot.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--h)}
+.slot>*{position:relative}
+.slot small{font:400 10px "Russo One",sans-serif;letter-spacing:.2em;color:var(--mu)}
+.slot.on small{color:var(--h)}
+.slot .ic{display:block;width:60px;height:60px;margin:4px auto 0}
+.slot b{display:block;font:400 16px "Black Han Sans",sans-serif;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot ul{list-style:none;padding:0;margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:10.5px;color:var(--mu)}
+.slot li.u{color:var(--ac);font-weight:700}
+.vsm{align-self:center;font:400 13px "Russo One",sans-serif;color:var(--mu)}
+#menu:not(.m3) .s3,#menu:not(.m3) .v3{display:none}
+#menu.m3 .slot ul{display:none}
+#roster{flex:1;min-height:110px;display:flex;flex-direction:column;border-top:1px solid var(--ln);padding-top:10px}
+.rt{display:flex;justify-content:space-between;align-items:center;font:400 11px "Russo One",sans-serif;letter-spacing:.2em;color:var(--mu);padding:0 2px 8px}
+.rt span{color:var(--ac);font-family:"Noto Sans KR",sans-serif;font-weight:700;letter-spacing:.05em}
+#grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:6px;align-content:start}
+.tile{position:relative;border:1px solid var(--ln);background:#0d0f15;padding:8px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:3px;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%);transition:transform .15s,background .15s,border-color .15s}
+.tile .ic{width:50px;height:50px}
+.tile b{font-size:11.5px;font-weight:700}
+.tile em{position:absolute;top:3px;font:400 8px "Russo One",sans-serif;font-style:normal;padding:1px 4px;display:none;color:#0b0d12}
+.tile .b1{left:3px;background:var(--ac)}
+.tile .b2{right:3px;background:#7fb0ff}
+.tile .b3{left:3px;top:auto;bottom:22px;background:#ff8fb8}
+.tile.p1 .b1,.tile.p2 .b2,.tile.p3 .b3{display:block}
+.tile.act{border-color:var(--h);background:#141720}
+.tile:active{transform:scale(.96)}
+.mf{display:flex;gap:8px}
+.mf .btn{flex:1}
+.mf .pri{flex:2.2}
+#mode button:not(:first-child):not(:last-child){clip-path:none}
+#tsetup{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid #3a2f12;background:linear-gradient(180deg,rgba(212,175,55,.08),rgba(10,9,7,.92))}
+#menu:not(.mt) #tsetup{display:none}
+#menu.mt #slots{display:none}
+#tsize{display:flex;justify-content:center;gap:6px}
+#tsize button{font:400 12px "Russo One",sans-serif;letter-spacing:.1em;padding:7px 16px;background:#0a0907;border:1px solid #3a2f12;color:#8a7a4a}
+#tsize button.on{background:linear-gradient(180deg,#ffe9a3,#d4af37 50%,#b8860b);color:#0b0907;border-color:#d4af37}
+#tslots{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.ts{position:relative;aspect-ratio:1;border:1px solid #3a2f12;background:#0a0907;padding:0;display:grid;place-items:center}
+.ts canvas{width:80%;height:80%}
+.ts i{position:absolute;left:2px;top:1px;font:400 8px "Russo One",sans-serif;font-style:normal;color:#8a7a4a}
+.ts.on{border-color:#ffe9a3;box-shadow:0 0 0 1px #d4af37,0 0 12px rgba(212,175,55,.5)}
+.gold{background:linear-gradient(180deg,#ffe9a3,#d4af37 50%,#b8860b)!important;color:#0b0907!important;border-color:#d4af37!important}
+#bracket,#champ{position:fixed;inset:0;display:none;flex-direction:column;gap:12px;padding:max(18px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));max-width:760px;margin:0 auto;z-index:5}
+#bracket.on,#champ.on{display:flex;animation:fi .5s}
+.gt{background:linear-gradient(180deg,#fff6d0,#f2c94c 45%,#b8860b 55%,#ffe9a3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bt{font:700 clamp(26px,8vw,40px) "Cinzel",serif;letter-spacing:.12em;text-align:center}
+.bs{text-align:center;font:400 11px "Russo One",sans-serif;letter-spacing:.4em;color:#b8954a;margin-top:6px}
+.bh:after{content:"";display:block;height:1px;margin:12px auto 0;width:70%;background:linear-gradient(90deg,transparent,#d4af37,transparent)}
+#brounds{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+#brounds span{font:400 11px "Russo One","Noto Sans KR",sans-serif;letter-spacing:.08em;padding:6px 12px;border:1px solid #3a2f12;color:#6f6038}
+#brounds span.on{border-color:#d4af37;color:#0b0907;background:linear-gradient(180deg,#ffe9a3,#d4af37)}
+#brounds span.done{color:#d4af37}
+#bmatches{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.bm{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #2a2310;background:linear-gradient(90deg,rgba(212,175,55,.06),rgba(10,9,7,.92));clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
+.bm.cur{border-color:#d4af37;box-shadow:inset 0 0 0 1px #d4af37,inset 0 0 24px rgba(212,175,55,.15)}
+.bm .no{font:400 10px "Russo One",sans-serif;color:#6f6038;width:18px}
+.be{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
+.be.r{flex-direction:row-reverse;text-align:right}
+.be canvas{width:30px;height:30px;flex:none}
+.be b{font-weight:700;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8e2cf}
+.be.lose{opacity:.28;filter:grayscale(1)}
+.be.win b{color:#f2c94c}
+.bm .v{font:700 11px "Cinzel",serif;color:#d4af37}
+#champ{align-items:center;justify-content:flex-end;text-align:center;padding-bottom:max(40px,env(safe-area-inset-bottom))}
+#champ .cl{font:700 clamp(32px,10vw,56px) "Cinzel",serif;letter-spacing:.2em}
+#champ .cn{font:400 clamp(26px,8vw,40px) "Black Han Sans",sans-serif;color:#fff;margin-top:4px;text-shadow:0 0 24px rgba(242,201,76,.5)}
+#champ .cs{font:400 10px "Russo One",sans-serif;letter-spacing:.5em;color:#b8954a;margin-top:10px}
+#vrow{display:flex;gap:6px;justify-content:center}
+#vrow:empty{display:none}
+#vrow button{font:700 12px "Noto Sans KR",sans-serif;padding:7px 16px;border:1px solid var(--ln);background:#0d0f15;color:var(--mu);clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+#vrow button.on{background:var(--h);color:#0b0d12;border-color:var(--h)}
+.tile .vb{display:block!important;left:auto;right:3px;top:auto;bottom:24px;background:#ff5a1f;color:#fff}
+.scr{position:fixed;inset:0;display:none;flex-direction:column;gap:14px;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));max-width:760px;margin:0 auto;z-index:4}
+.scr.on{display:flex;animation:fi .35s}
+#hub{justify-content:center;gap:46px}
+#sdbg{text-align:center;font-size:11px;color:#7c8396;line-height:1.6;white-space:pre-line}
+#hub .logo{font-size:clamp(36px,11vw,64px)}
+.hbtns{display:flex;flex-direction:column;gap:12px;padding:0 4%}
+.hb{display:flex;align-items:baseline;justify-content:space-between;padding:20px 22px;border:1px solid var(--ln);background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(13,15,21,.92));clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);transition:transform .15s}
+.hb b{font:400 26px "Black Han Sans",sans-serif}
+.hb small{font:400 12px "Russo One",sans-serif;letter-spacing:.3em;color:var(--mu)}
+.hb.pri{background:linear-gradient(90deg,#ffcf3f,#ffb100);color:#0b0d12;border-color:transparent}
+.hb.pri small{color:#4a3800}
+.hb:active,.mc:active,.dsk:active{transform:scale(.98)}
+.sh{display:flex;align-items:center;gap:10px}
+.sh b{font:400 21px "Black Han Sans",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{flex:none;width:38px;height:38px;border:1px solid var(--ln);background:#0d0f15;font:400 22px "Russo One",sans-serif;line-height:1;padding:0;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px)}
+.mlist{display:flex;flex-direction:column;gap:10px;flex:1;justify-content:center}
+.mc{display:grid;grid-template-columns:84px 1fr;column-gap:14px;text-align:left;padding:18px;border:1px solid var(--ln);background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(13,15,21,.92));clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);transition:transform .15s}
+.mc i{grid-row:1/3;align-self:center;font:400 20px "Russo One",sans-serif;font-style:normal;color:var(--ac);text-align:center}
+.mc b{font:400 22px "Black Han Sans",sans-serif}
+.mc small{color:var(--mu);font-size:12px;margin-top:2px}
+.mc.gold{border-color:#5a4614;background:linear-gradient(90deg,rgba(212,175,55,.15),rgba(10,9,7,.94))}
+.mc.gold i{font-family:"Cinzel",serif;font-weight:700;background:linear-gradient(180deg,#fff6d0,#f2c94c 45%,#b8860b 55%,#ffe9a3);-webkit-background-clip:text;background-clip:text;color:transparent}
+#dgrid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;align-content:start}
+.dtop{display:flex;align-items:center;gap:6px;justify-content:center}
+#dic{width:104px;height:104px;flex:none}
+#dhex{width:220px;height:200px}
+#dsk{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.dsk{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;padding:12px;border:1px solid var(--ln);background:#0d0f15;text-align:left;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);transition:transform .12s}
+.dsk i{font:400 11px "Russo One",sans-serif;font-style:normal;color:#aab1c3;border:1px solid var(--ln);height:30px;display:grid;place-items:center}
+.dsk.u i{color:var(--ac);border-color:#4a3d12}
+.dsk b{display:block;font-weight:900;font-size:15px}
+.dsk small{display:block;color:var(--mu);font-size:11.5px;margin-top:3px;line-height:1.45}
+.dsk em{font:400 10px "Russo One","Noto Sans KR",sans-serif;font-style:normal;color:var(--ac);text-align:right;line-height:1.6;white-space:nowrap}
+.dsk:after{content:"▶ 눌러서 미리보기";grid-column:2/4;font-size:10.5px;color:#5f6678}
+.dsk.np:after{display:none}
+#demo{position:fixed;left:0;right:0;top:0;display:none;z-index:6;padding:max(10px,env(safe-area-inset-top)) 12px 0}
+#demo.on{display:block}
+.dbar{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:760px;margin:0 auto;padding:10px 12px;background:rgba(13,15,21,.94);border:1px solid var(--ln);border-top:2px solid var(--ac)}
+.dbar small{display:block;font:400 10px "Russo One",sans-serif;letter-spacing:.2em;color:var(--mu)}
+.dbar b{font-weight:900;font-size:16px}
+#dclose{width:36px;height:36px;border:1px solid var(--ln);background:#11141b;font-size:16px;padding:0;flex:none}
+#demod{max-width:760px;margin:6px auto 0;padding:8px 12px;background:rgba(13,15,21,.85);font-size:12px;color:#cfd5e2;line-height:1.5}
+@media (min-width:700px){.nm b{font-size:15px}.p .ic{width:34px;height:34px}.chip{width:18px;height:18px;font-size:9px}.chip.u{width:30px}}
+#sgrid{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-bottom:70px}
+.vh{font:400 15px "Black Han Sans",sans-serif;color:var(--ac);margin:12px 0 2px;letter-spacing:.04em}
+.vrow{display:grid;grid-template-columns:1fr 42px 34px;grid-template-areas:"l l b" "r p b";align-items:center;gap:4px 8px;padding:10px 12px;border:1px solid var(--ln);background:var(--pn)}
+.vrow .vl{grid-area:l;display:flex;align-items:baseline;gap:8px;min-width:0}
+.vrow .vl b{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vrow .vl small{font-size:11px;color:var(--mu)}
+.vrow input{grid-area:r;width:100%;accent-color:var(--ac)}
+.vrow .vp{grid-area:p;font-size:12px;color:var(--mu);text-align:right}
+.vrow .vplay{grid-area:b;width:34px;height:34px;border:1px solid var(--ln);background:#151821;color:var(--tx);font-size:13px;padding:0}
+.vrow:has(.vplay)>.vp{grid-area:p}
+.vrow:not(:has(.vplay)){grid-template-columns:1fr 42px;grid-template-areas:"l l" "r p"}
+.vreset{margin-top:14px;padding:13px;border:1px solid var(--ln);background:#151821;color:var(--tx);font-size:14px}
