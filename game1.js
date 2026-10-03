@@ -55,7 +55,15 @@ const DEF=[
 {name:'김민채 • 각성',gl:'채',k:'magma',heavy:2,vof:0,r:40,sp:130,col:'#ff5a1f',hi:'#ffd27a',dk:'#2a0d05',alt:{col:'#ff2e63',hi:'#ffc2d1',dk:'#2a0510'},alt2:{col:'#7a5cff',hi:'#d9d0ff',dk:'#150a33'},sk:[
   {n:'용암 분출',w:.8,cd:9,tel:'line',c:(o,t)=>!t.hid,f:(o,t)=>{const a=Math.atan2(t.y+t.dy*t.sp*.6-o.y,t.x+t.dx*t.sp*.6-o.x),sp=[];for(let i=0;i<4;i++){const d=o.r+60+i*85;sp.push({x:clamp(o.x+Math.cos(a)*d,30,A-30),y:clamp(o.y+Math.sin(a)*d,30,A-30),dl:.35+i*.18,done:0})}HZ.push({k:'gey',o,t:0,sp,hs:[]});SFX('cast')}},
   {n:'1700kg 운석 낙하',w:.6,cd:14,c:(o,t)=>!t.hid,f:(o,t)=>{o.lp={t:0,tg:t};FX.push({k:'pillar',x:o.x,y:o.y,c:o.d.col,l:.6,m:.6});SFX('slam');shake=Math.max(shake,8)}},
-  {n:'지옥의 아가리',w:1.8,ult:1,f:(o,t)=>{F.filter(x=>x!=o&&!x.dead).forEach(e=>HZ.push({k:'maw',o,e,t:0,x:e.x,y:e.y,done:0}))}}]}
+  {n:'지옥의 아가리',w:1.8,ult:1,f:(o,t)=>{F.filter(x=>x!=o&&!x.dead).forEach(e=>HZ.push({k:'maw',o,e,t:0,x:e.x,y:e.y,done:0}))}}]},
+{name:'공병은 • 곤지암병은',gl:'곤',k:'horror',vof:1,r:26,sp:210,col:'#8fd6bd',hi:'#effff8',dk:'#06231a',alt:{col:'#d0283e',hi:'#ffd5db',dk:'#2b050b'},alt2:{col:'#9b7bff',hi:'#ece6ff',dk:'#170d3a'},sk:[
+  {n:'빈 휠체어',w:.6,cd:6,c:(o,t)=>!t.hid,f:(o,t)=>hWheel(o,t)},
+  {n:'저주 표식',w:.6,cd:10,c:(o,t)=>!t.hid&&!t.jump,f:(o,t)=>hCurse(o,t)},
+  {n:'정전 병동',w:1.8,ult:1,f:(o,t)=>hWard(o,t)}]},
+{name:'박지성 • 해버지',gl:'해',k:'soccer',vof:2,r:26,sp:215,col:'#e62635',hi:'#ffe4e6',dk:'#3d0509',alt:{col:'#2d6bff',hi:'#dbe6ff',dk:'#0a1a4a'},alt2:{col:'#1fbf6a',hi:'#d8ffe9',dk:'#06361d'},sk:[
+  {n:'중거리 슛',w:.6,cd:5.5,aim:1,c:(o,t)=>!t.hid,f:(o,t)=>fKick(o,t)},
+  {n:'산소탱크',w:.5,cd:9,c:(o,t)=>!t.hid&&dist(o,t)<480,f:(o,t)=>fTank(o,t)},
+  {n:'해버지 슈퍼골',w:1.8,ult:1,f:(o,t)=>fGoal(o,t)}]}
 ];
 function JOB(o,t){
   const J=['체어맨','메딕','아처','파이어맨'];let j=o.job%4;if(j==1&&o.hp>80)j=2;o.job=j+1;
@@ -73,7 +81,9 @@ const INFO={
 '김가은':{st:[6,7,6,5,6,8],p:'',sk:[['직업별','체어맨 휘두르기 14 · 메딕 회복 18 · 아처 7×3 · 파이어맨 소화기'],['13','펜으로 붓선을 그은 뒤 선 전체가 터짐'],['7+7+12','만화 세 칸이 차례로 터지며 전체 공격']]},
 '흉악범':{st:[6,4,8,7,6,9],p:'',sk:[['5×5장','카드 5장을 부채꼴로 던지고 부메랑처럼 회수'],['6+7','뒤로 순간이동해 베고 상대 몸에 장미 폭탄'],['7×5발','매드무비 · 5발 중 맞힌 만큼 킬 · 5킬이면 ACE']]},
 '김건우':{st:[6,5,10,6,5,6],p:'니케 스승 · 김티비 상대로 피해 25% 증가',sk:[['6','바나나 껍질 3개 설치 · 밟으면 미끄러짐'],['14','연막을 깔고 그 안의 상대에게 헤드샷'],['3×7','원숭이 7마리가 사방에서 덮침']]},
-'김민채 • 각성':{st:[9,9,2,6,9,8],p:'1700kg · 모든 피해 20% 감소 · 부딪히면 화상',sk:[['10','앞으로 용암 기둥 4개가 차례로 분출'],['10+웅덩이','하늘로 솟구쳤다가 상대 위로 낙하 · 용암 웅덩이 생성'],['17','상대 발밑에서 용암 아가리가 솟아 물어뜯음 · 체력 조금 회복']]}
+'김민채 • 각성':{st:[9,9,2,6,9,8],p:'1700kg · 모든 피해 20% 감소 · 부딪히면 화상',sk:[['10','앞으로 용암 기둥 4개가 차례로 분출'],['10+웅덩이','하늘로 솟구쳤다가 상대 위로 낙하 · 용암 웅덩이 생성'],['17','상대 발밑에서 용암 아가리가 솟아 물어뜯음 · 체력 조금 회복']]},
+'공병은 • 곤지암병은':{st:[7,5,7,8,7,8],p:'폐병원의 기운 · 어디선가 삐걱거리는 소리',sk:[['12','주인 없는 휠체어가 혼자 굴러가 쫓아가서 들이받음 · 잠깐 기절'],['14','상대 발밑에 저주 표식이 따라붙고 3초 뒤 터짐 · 둔화'],['3×N+12','형광등이 칸마다 꺼졌다 켜짐 · 꺼진 칸에 서 있으면 계속 피해 · 마지막에 전등이 전부 깨짐']]},
+'박지성 • 해버지':{st:[7,6,9,8,5,8],p:'산소탱크 · 두 개의 심장',sk:[['12','벽에 두 번까지 튕기는 중거리 슛'],['10+4','멈추지 않는 질주로 쫓아가 태클 · 맞으면 기절'],['24','공을 띄워 저글링한 뒤 휘어지는 슈퍼골 · 골대까지 날려버림']]}
 };
 const baseOf=i=>DEF[i]&&DEF[i].vof!=null?DEF[i].vof:i;
 const VARS=i=>{const b=baseOf(i);return[b,...DEF.map((d,j)=>j).filter(j=>DEF[j].vof===b)]};
@@ -143,6 +153,7 @@ function GUST(o,t){
   if(rf)ft(o.x,o.y-o.r-26,'반사!','#b9ffcf',18);
 }
 function trail(q,dt){
+  if(TRL[q.k]){TRL[q.k](q,dt);return}
   const bx=-q.vx*.12,by=-q.vy*.12;
   if(q.k=='flame'){
     emit(110,dt,()=>fireP(q.x+rnd(-4,4),q.y+rnd(-4,4),bx+rnd(-35,35),by+rnd(-35,35),rnd(9,15),rnd(.25,.45)));
@@ -228,7 +239,7 @@ function hurt(t,n,o,x,y,slow,heavy){
   t.hp=Math.max(0,t.hp-n);t.flash=.12;SFX(heavy?'heavy':n>2?'hit':'tick');if(slow)t.slow=1.5;if(!F.some(x=>x.cast&&x.cast.s.ult)&&!TSTOP&&!MAD){o.ug=Math.min(100,(o.ug||0)+n*1.2);t.ug=Math.min(100,(t.ug||0)+n*.8)}
   spark(x,y,o.d.k,n>2?14:3,260);if(n>2)ring(x,y,6,heavy?60:38,o.d.hi,4,.35);
   if(heavy){SLOW=Math.max(SLOW,.22);zk=1;zx=x;zy=y;FX.push({k:'x',x,y,col:o.d.hi,l:.35,m:.35});FX.push({k:'burst',x,y,c:o.d.hi,a:rnd(0,1),l:.3,m:.3})}
-  ft(t.x+rnd(-14,14),t.y-t.r-8,'-'+n,'#fff',n>10?28:n>2?22:15);
+  dmgT(t,n,heavy);if(heavy&&n>=10)FX.push({k:'imp',x,y,c:o.d.hi,l:.2,m:.2});
   if(n>2){shake=Math.max(shake,heavy?12:6);hs=heavy?.1:.06}
   if(n>2){t.sq=1;t.sa=ang(o,t)}
   const bar=$('#p'+t.i+' .bar');bar.classList.remove('hit');void bar.offsetWidth;bar.classList.add('hit');
@@ -236,7 +247,7 @@ function hurt(t,n,o,x,y,slow,heavy){
     t.dead=1;KO=t;SFX('ko');t.cast=null;F.forEach(x=>{if(x.gulp&&x.gulp.tg==t)x.gulp=null});if(TSTOP&&TSTOP.o==t)TSTOP=null;if(MAD&&MAD.o==t)MAD=null;
     const al=F.filter(x=>!x.dead);
     if(al.length<=1){phase='end';win=al[0]||o;TSTOP=null;MAD=null;endT=0;ts=.25;bn=null}else{ft(t.x,t.y-t.r-30,'K.O.','#ffffff',44);SLOW=.5;zk=1.5;zx=t.x;zy=t.y}
-    spark(t.x,t.y,t.d.k,40,480);spark(t.x,t.y,'dust',20,300);
+    spark(t.x,t.y,t.d.k,40,480);spark(t.x,t.y,'dust',20,300);shatter(t);
     ring(t.x,t.y,10,160,'#fff',6,.6);ring(t.x,t.y,10,110,t.d.col,10,.8);shake=22;cfx=t.x;cfy=t.y;
   }
 }
@@ -258,7 +269,7 @@ function step(dt){
     if(f.x>A-f.r){f.x=A-f.r;f.dx=-Math.abs(f.dx);w=0}
     if(f.y<f.r){f.y=f.r;f.dy=Math.abs(f.dy);w=1}
     if(f.y>A-f.r){f.y=A-f.r;f.dy=-Math.abs(f.dy);w=1}
-    if(w>=0){f.sq=1;f.sa=w?Math.PI/2:0;spark(f.x,f.y,'dust',4,110)}
+    if(w>=0){f.sq=1;f.sa=w?Math.PI/2:0;spark(f.x,f.y,'dust',4,110);wallHit(f)}
     f.tr.push([f.x,f.y]);
     const mx=f.dash>0?14:0;while(f.tr.length>mx)f.tr.shift();
     if(f.slow>0&&Math.random()<dt*20)Pt.push({x:f.x+rnd(-20,20),y:f.y+rnd(-20,20),vx:0,vy:-30,l:.5,m:.5,sh:1,rot:0,vr:3,col:'#e3f6ff',r:4});
@@ -354,7 +365,7 @@ function step(dt){
 
   if(U||TSTOP||MAD)return;
   HZ=HZ.filter(h=>{
-    h.t+=dt;const EN=F.filter(x=>x!=h.o&&!x.dead),t=tgt(h.o)||h.o;
+    h.t+=dt;const EN=F.filter(x=>x!=h.o&&!x.dead),t=tgt(h.o)||h.o;if(HZX[h.k])return HZX[h.k](h,dt,EN,t);
     if(h.k=='gey'){
       let last=0;h.sp.forEach(q=>{last=Math.max(last,q.dl);if(!q.done&&h.t>=q.dl){q.done=1;SFX('slam');shake=Math.max(shake,7);
         for(let i=0;i<16;i++)fireP(q.x+rnd(-12,12),q.y,rnd(-60,60),rnd(-420,-200),rnd(10,18),rnd(.5,.9),PAL.magma);for(let i=0;i<8;i++)rockP(q.x,q.y,rnd(0,TAU),rnd(60,160));
@@ -505,6 +516,7 @@ function step(dt){
     q.age+=dt;q.x+=q.vx*dt;q.y+=q.vy*dt;
     trail(q,dt);
     for(const t of F){if(t==q.o||t.dead||t.hid||t.jump)continue;if(Math.hypot(q.x-t.x,q.y-t.y)<t.r+q.r){if(q.boom){if(!q.hs.includes(t)){q.hs.push(t);hurt(t,q.dmg,q.o,q.x,q.y,0,0)}continue}hurt(t,q.dmg,q.o,q.x,q.y,q.slow,0);if(q.k=='hs'){ft(t.x,t.y-t.r-44,'HEADSHOT','#ff4655',30);FX.push({k:'burst',x:t.x,y:t.y,c:'#ff4655',a:0,l:.3,m:.3})}return false}}
+    if(q.bnc>0)bounceB(q);
     if(!q.boom&&(q.x<0||q.x>A||q.y<0||q.y>A)){spark(clamp(q.x,0,A),clamp(q.y,0,A),q.o.d.k,5,140);return false}
     return true;
   });

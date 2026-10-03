@@ -130,6 +130,7 @@ function drawLeap(f){
   if(L.t>=1.25){const v=clamp((L.t-1.25)/.25,0,1),yy=f.y-(1-v*v)*520,sz=f.r*3.2;g.save();g.globalCompositeOperation='lighter';glow('#ff8a2c',f.x,yy,f.r*3,.9);g.restore();g.drawImage(ICON(D,84),f.x-sz/2,yy-sz/2,sz,sz)}
 }
 function drawHZ(h){
+  if(HZD[h.k]){HZD[h.k](h);return}
   if(h.k=='gey'){drawGey(h);return}
   if(h.k=='pool'){drawPool(h);return}
   if(h.k=='maw'){drawMaw(h);return}
@@ -278,7 +279,7 @@ function draw(){
   if(zk>.01){const zz=1+.07*zk;g.translate(zx,zy);g.scale(zz,zz);g.translate(-zx,-zy)}
   g.save();g.translate(A/2,A/2);g.scale(cz,cz);g.translate(-(A/2+(cfx-A/2)*(cz-1)/.3*.5),-(A/2+(cfy-A/2)*(cz-1)/.3*.5));
   g.save();g.beginPath();g.rect(0,0,A,A);g.clip();
-  g.drawImage(floor(),0,0,A,A);
+  g.drawImage(floor(),0,0,A,A);floorFX();
   if(TOURM){g.fillStyle='rgba(8,6,2,.45)';g.fillRect(0,0,A,A);g.strokeStyle='rgba(212,175,55,.3)';g.lineWidth=2;g.beginPath();g.arc(A/2,A/2,92,0,TAU);g.stroke();g.font='700 20px Cinzel,serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='rgba(212,175,55,.2)';g.fillText(TOURM.final?'GRAND FINAL':'JS CHAMPIONS',A/2,A/2)}
   g.restore();
 
@@ -288,20 +289,23 @@ function draw(){
   if(phase!='cd'||tm<2.3){g.save();g.globalCompositeOperation='lighter';F.forEach(f=>{if(!f.dead)glow(f.d.col,f.x,f.y+6,f.r*4.2,.28)});B.forEach(q=>glow(q.D.col,q.x,q.y,60,.22));g.restore();g.globalAlpha=1}
   F.forEach(f=>{if(f.jump){const j=f.jump,u=Math.min(1,j.t/j.dur);g.save();g.translate(j.tx,j.ty);g.strokeStyle=f.d.col;g.globalAlpha=.5+.4*u;g.lineWidth=4;g.setLineDash([12,8]);g.lineDashOffset=-clock*60;g.beginPath();g.arc(0,0,95,0,TAU);g.stroke();g.setLineDash([]);g.fillStyle=f.d.col+'33';g.beginPath();g.arc(0,0,95*u,0,TAU);g.fill();g.restore()}});g.globalAlpha=1;
   HZ.forEach(drawHZ);B.forEach(bullet);
-  F.forEach(f=>ball(f,tgt(f)||f));F.forEach(frozen);F.forEach(drawGulp);F.forEach(drawGear);F.forEach(drawLeap);
+  F.forEach(afterImg);F.forEach(f=>ball(f,tgt(f)||f));F.forEach(lowHP);F.forEach(frozen);F.forEach(drawGulp);F.forEach(drawGear);F.forEach(drawLeap);
   FX.forEach(x=>!GROUND(x.k)&&drawFX(x));
   drawParticles();
   HZ.forEach(h=>{if(h.k=='smoke')drawSmoke(h)});
   HZ.forEach(h=>{if(h.k=='toon')drawToon(h)});
+  HZ.forEach(h=>{if(HZP[h.k])HZP[h.k](h)});
   if(TSTOP)drawStop();
   if(MAD)drawMad();
   T.forEach(x=>{
+    if(x.dm){drawDmg(x);return}
     const pp=1+.7*Math.max(0,(x.l-.85)/.15);
     g.save();g.translate(x.x,x.y);g.scale(pp,pp);g.globalAlpha=Math.min(1,x.l*1.6);
     g.font=`${x.size}px ${FD}`;g.textAlign='center';
     g.lineWidth=5;g.lineJoin='round';g.strokeStyle='#0b0d12';g.strokeText(x.txt,0,0);
     g.fillStyle=x.col;g.fillText(x.txt,0,0);g.restore();
   });
+  if(phase=='end')winFX();
   banner();
 
   if(phase=='cd'){if(TOURM){tm>3?tourIntro():tourCount()}else{tm>3?intro():count()}}
@@ -315,6 +319,7 @@ function draw(){
   g.lineWidth=3;g.strokeStyle=TOURM?'#d4af37':'#7b8294';g.strokeRect(-1,-1,A+2,A+2);
   g.fillStyle=TOURM?'#f2c94c':'#9aa1b3';
   [[-7,-7],[A+7,-7],[-7,A+7],[A+7,A+7]].forEach(([x,y])=>{g.beginPath();g.arc(x,y,6,0,TAU);g.fill();g.strokeStyle='#12151c';g.lineWidth=2;g.stroke()});
+  drawWalls();
   g.restore();
 }
 
@@ -472,7 +477,7 @@ function startMatch(){
   $('#bracket').classList.remove('on');document.body.classList.remove('m');
   init();F[0].d=Object.assign({},F[0].d,{name:a.lab});F[1].d=Object.assign({},F[1].d,{name:b.lab});buildHUD();TM0=fin?6.4:5.2;tm=TM0;
 }
-function showChamp(){phase='champ';TOURM=null;CF=[];MP=[];$('#msg').className='';document.body.classList.add('m');$('#champ').classList.add('on');$('#cname').textContent=TOUR.rounds[TOUR.r][0].lab;SFX('ko')}
+function showChamp(){phase='champ';TOURM=null;CF=[];MP=[];$('#msg').className='';document.body.classList.add('m');$('#champ').classList.add('on');$('#cname').textContent=TOUR.rounds[TOUR.r][0].lab;SFXa('champ')}
 function mkMenu(){
   $('#grid').innerHTML=DEF.map((d,i)=>{if(d.vof!=null)return '';const vc=DEF.filter(x=>x.vof===i).length;return `<button class="tile" data-i="${i}" style="--c:${d.col};--h:${d.hi}"><canvas class="ic"></canvas><b>${d.name}</b><em class="b1">P1</em><em class="b2">P2</em><em class="b3">P3</em>${vc?'<em class="vb">+'+vc+'</em>':''}</button>`}).join('');
   document.querySelectorAll('.tile').forEach(t=>{paintIc(t.querySelector('.ic'),DEF[+t.dataset.i],50);t.addEventListener('click',()=>{audioOn();SFX('click');if(MENU_T){TSEL[ACT]=+t.dataset.i;ACT=(ACT+1)%TSIZE;paintMenu();return}SEL[ACT]=+t.dataset.i;ACT=(ACT+1)%MODE;initMenu()})});
@@ -502,15 +507,13 @@ $('#hset').addEventListener('click',()=>{audioOn();SFX('click');mkSet();scr('set
 document.querySelectorAll('.back').forEach(b=>b.addEventListener('click',()=>{SFX('click');const t2=b.dataset.b;if(t2=='home')goHome();else scr(t2)}));
 document.querySelectorAll('.mc').forEach(b=>b.addEventListener('click',()=>{audioOn();SFX('click');const m=b.dataset.m;MENU_T=m=='T'?1:0;MODE=MENU_T?2:+m;ACT=0;$('#mtitle').textContent=MENU_T?'토너먼트 · 참가자 선택':m=='3'?'3인 난투 · 캐릭터 선택':'1대1 · 캐릭터 선택';initMenu()}));
 $('#dclose').addEventListener('click',()=>{SFX('click');endDemo()});
-mkMenu();mkDict();goHome();loadSnd();
-requestAnimationFrame(t=>{last=t;loop(t)});
 
 // ===== 설정: 사운드별 볼륨 =====
 const SLB={m:'전체 볼륨',b:'배경음악 전체',s:'효과음 전체',bgm_menu:'메인 화면 음악',bgm_battle:'전투 음악',bgm_tour:'토너먼트 전투 음악',bgm_final:'결승 · 우승 음악',
 gun:'총 (풀오토 · 헤드샷 · 매드무비)',throw:'던지기 (카드 · 바나나)',arrow:'가은 화살',skillshot:'병은 Q 스킬샷',knife:'지성 칼',slash:'흉악범 뒤잡기',swing:'가은 의자',beam:'블래스터 · 레일건',
 floor1:'7단 콤보 1타',floor2:'7단 콤보 2타',floor3:'7단 콤보 3타',floor4:'7단 콤보 4타',floor5:'7단 콤보 5타',floor6:'7단 콤보 6타',floor7:'7단 콤보 7타 (막타)',
 tstop:'지성 시간 정지',hit:'맞는 소리 (보통)',tick:'맞는 소리 (약)',heavy:'맞는 소리 (강)',cast:'스킬 시전',ult:'궁극기 발동',cd:'카운트다운',go:'FIGHT',vs:'VS (시작할 때)',ko:'KO',
-slam:'민채 쿵',gulp:'민채 꿀꺽',chew:'민채 씹기',spit:'민채 뱉기',rush:'병은 스탠드 러시',click:'버튼 클릭'};
+slam:'민채 쿵',h_wheel:'곤지암 · 휠체어',h_curse:'곤지암 · 저주 걸기',h_burst:'곤지암 · 저주 터짐',h_ult:'곤지암 · 정전 시작',h_flicker:'곤지암 · 형광등 깜빡',h_glass:'곤지암 · 전등 깨짐',kick:'해버지 · 슛',juggle:'해버지 · 저글링 · 공 튕김',tackle:'해버지 · 태클',whistle:'해버지 · 휘슬',goal:'해버지 · 골 함성',champ:'토너먼트 우승',gulp:'민채 꿀꺽',chew:'민채 씹기',spit:'민채 뱉기',rush:'병은 스탠드 러시',click:'버튼 클릭'};
 function setRow(k,isG){const v=isG?VOL[k]:pv(k);const d=document.createElement('div');d.className='vrow';
 d.innerHTML='<div class="vl"><b>'+SLB[k]+'</b>'+(isG?'':'<small>'+k+'.mp3</small>')+'</div><input type="range" min="0" max="100" step="1" value="'+Math.round(v*100)+'"><span class="vp">'+Math.round(v*100)+'%</span>'+(isG?'':'<button class="vplay">▶</button>');
 const r=d.querySelector('input'),p=d.querySelector('.vp');

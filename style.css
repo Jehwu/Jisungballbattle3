@@ -201,3 +201,6 @@ header{text-align:center;padding-top:6px}
 .vrow:has(.vplay)>.vp{grid-area:p}
 .vrow:not(:has(.vplay)){grid-template-columns:1fr 42px;grid-template-areas:"l l" "r p"}
 .vreset{margin-top:14px;padding:13px;border:1px solid var(--ln);background:#151821;color:var(--tx);font-size:14px}
+.p.low .bar i{animation:lowhp .5s ease-in-out infinite alternate}
+@keyframes lowhp{from{filter:none}to{filter:brightness(1.6) saturate(1.4);background:linear-gradient(90deg,#ff2a2a,#ff8a8a)}}
+.p.low .nm b{color:#ff6b6b}

@@ -1,5 +1,5 @@
 let AC=null,MG=null,NB=null,MUTE=0,SERR='';const SL={};
-const SND=['gun','throw','arrow','skillshot','knife','slash','swing','floor1','floor2','floor3','floor4','floor5','floor6','floor7','tstop','hit','tick','heavy','cast','ult','cd','go','vs','ko','slam','gulp','chew','spit','beam','rush','click'],BUF={};let BGM=null,BGMn='';
+const SND=['gun','throw','arrow','skillshot','knife','slash','swing','floor1','floor2','floor3','floor4','floor5','floor6','floor7','tstop','hit','tick','heavy','cast','ult','cd','go','vs','ko','slam','gulp','chew','spit','beam','rush','click','h_wheel','h_curse','h_burst','h_ult','h_flicker','h_glass','kick','juggle','tackle','whistle','goal','champ'],BUF={};let BGM=null,BGMn='';
 const AUD={};let BGMA=null,AERR=0;
 // 볼륨 설정 (설정 화면에서 조절, 폰에 저장)
 const DV={bgm_menu:.35,bgm_battle:.12,bgm_tour:.12,bgm_final:.18};
