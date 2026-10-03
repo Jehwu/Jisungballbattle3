@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>JS BALL BATTLE3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cinzel:wght@700&family=Russo+One&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div class="p" id="p0"><div class="hd"><canvas class="ic"></canvas><div class="nm"><b></b><em id="n0">100</em></div></div><div class="bar"><u></u><i></i></div><div class="rw"><div class="ug"><i></i></div><div class="sk"></div></div></div>
+  <div class="p r" id="p1"><div class="hd"><canvas class="ic"></canvas><div class="nm"><b></b><em id="n1">100</em></div></div><div class="bar"><u></u><i></i></div><div class="rw"><div class="ug"><i></i></div><div class="sk"></div></div></div>
+  <div class="p r" id="p2"><div class="hd"><canvas class="ic"></canvas><div class="nm"><b></b><em id="n2">100</em></div></div><div class="bar"><u></u><i></i></div><div class="rw"><div class="ug"><i></i></div><div class="sk"></div></div></div>
+</div>
+<button id="snd">🔊</button>
+<div id="ctl"><button id="bexit">✕ 나가기</button><button id="bskip">SKIP ⏭</button></div>
+<div id="cfm"><div class="cbox"><b>경기를 나갈까요?</b><small id="cfms"></small><div class="btns" style="justify-content:center"><button class="btn" id="cno">취소</button><button class="btn pri" id="cyes">나가기</button></div></div></div>
+<div id="msg"><div id="mt"></div><div class="btns"><button class="btn pri" id="go">REMATCH</button><button class="btn" id="home">MENU</button><button class="btn pri gold" id="tnext" style="display:none">BRACKET</button></div></div>
+<div id="bracket"><div class="bh"><div class="bt gt">JS CHAMPIONS</div><div class="bs" id="bsub"></div></div><div id="brounds"></div><div id="bmatches"></div><div class="mf"><button class="btn" id="bquit">QUIT</button><button class="btn pri gold" id="bnext">NEXT MATCH</button></div></div>
+<div id="champ"><div class="cl gt">CHAMPION</div><div class="cn" id="cname"></div><div class="cs">JS BALL BATTLE3 · CHAMPIONS</div><div class="btns" style="margin-top:20px"><button class="btn" id="cmenu">MENU</button><button class="btn pri gold" id="cagain">NEW TOURNAMENT</button></div></div>
+<div id="hub" class="scr"><div><div class="logo"><span>JS</span> BALL BATTLE <em>3</em></div><div class="sub">AUTO BATTLE ARENA</div></div><div class="hbtns"><button class="hb pri" id="hplay"><b>게임 시작</b><small>PLAY</small></button><button class="hb" id="hdict"><b>사전</b><small>CODEX</small></button><button class="hb" id="hset"><b>설정</b><small>SETTINGS</small></button></div><div id="sdbg"></div></div>
+<div id="modes" class="scr"><div class="sh"><button class="back" data-b="home">‹</button><b>모드 선택</b></div><div class="mlist"><button class="mc" data-m="2"><i>1 : 1</i><b>1대1</b><small>두 캐릭터의 정면 승부</small></button><button class="mc" data-m="3"><i>1:1:1</i><b>3인 난투</b><small>셋이 동시에 싸우는 혼전</small></button><button class="mc gold" data-m="T"><i>CUP</i><b>토너먼트</b><small>8강 · 16강 블랙골드 대회</small></button></div></div>
+<div id="set" class="scr"><div class="sh"><button class="back" data-b="home">‹</button><b>설정 · 사운드</b></div><div id="sgrid"></div></div>
+<div id="dict" class="scr"><div class="sh"><button class="back" data-b="home">‹</button><b>캐릭터 사전</b></div><div id="dgrid"></div></div>
+<div id="dinfo" class="scr"><div class="sh"><button class="back" data-b="dict">‹</button><b id="dname"></b></div><div class="dtop"><canvas id="dic"></canvas><canvas id="dhex"></canvas></div><div id="dsk"></div></div>
+<div id="demo"><div class="dbar"><div><small id="demot"></small><b id="demon"></b></div><button id="dclose">✕</button></div><div id="demod"></div></div>
+<div id="menu">
+  <div class="sh"><button class="back" data-b="modes">‹</button><b id="mtitle">캐릭터 선택</b></div>
+  <div id="tsetup"><div id="tsize"><button data-t="8" class="on">8강</button><button data-t="16">16강</button></div><div id="tslots"></div></div>
+  <section id="slots">
+    <div class="slot on" data-s="0"><small>P1</small><canvas class="ic"></canvas><b></b><ul></ul></div>
+    <div class="vsm">VS</div>
+    <div class="slot" data-s="1"><small>P2</small><canvas class="ic"></canvas><b></b><ul></ul></div>
+    <div class="vsm v3">VS</div>
+    <div class="slot s3" data-s="2"><small>P3</small><canvas class="ic"></canvas><b></b><ul></ul></div>
+  </section>
+  <div id="vrow"></div>
+  <section id="roster"><div class="rt">SELECT<span id="hint">P1 선택 중</span></div><div id="grid"></div></section>
+  <div class="mf"><button class="btn" id="rand">RANDOM</button><button class="btn pri" id="start">FIGHT</button></div>
+</div>
+<div id="ld"><div class="ldin"><div class="ldlogo"><span>JS</span> BALL BATTLE <em>3</em></div><div class="ldbar"><i id="ldfill"></i></div><div id="ldpct">0%</div><div id="ldtxt">게임 파일 불러오는 중</div><div id="ldtip"></div><div id="ldgo">화면을 터치해서 시작</div></div></div>
+<style>
+#ld{position:fixed;inset:0;z-index:98;background:radial-gradient(circle at 50% 40%,#1a1d28,#07080c 70%);display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+#ld.out{opacity:0;pointer-events:none}
+.ldin{width:min(82vw,420px);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.ldlogo{font:400 clamp(30px,9vw,46px) "Russo One","Black Han Sans",sans-serif;color:#e8eaf0;letter-spacing:.02em}
+.ldlogo span{color:#ffcf3f}.ldlogo em{font-style:normal;color:#ffcf3f}
+.ldbar{width:100%;height:10px;background:#1a1d26;border:1px solid #2a2f3d;transform:skewX(-20deg);overflow:hidden}
+.ldbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffb100,#ffcf3f,#fff3c0);box-shadow:0 0 12px #ffcf3f;transition:width .25s}
+#ldpct{font:400 22px "Russo One",sans-serif;color:#ffcf3f}
+#ldtxt{font:500 14px "Noto Sans KR",sans-serif;color:#9aa1b3}
+#ldtip{font:500 13px "Noto Sans KR",sans-serif;color:#6c7285;min-height:40px;line-height:1.5}
+#ldgo{display:none;margin-top:10px;font:400 18px "Black Han Sans",sans-serif;color:#fff;animation:ldb 1s ease-in-out infinite alternate}
+@keyframes ldb{from{opacity:.35}to{opacity:1}}
+</style>
+<div id="lderr" style="display:none;position:fixed;left:12px;right:12px;top:40%;z-index:99;background:#1a0b0e;border:1px solid #ff4d6d;color:#fff;padding:14px;font:14px/1.6 sans-serif;white-space:pre-line"></div>
+<script>
+// js 파일을 차례로 불러옴 : js 폴더에 없으면 index.html 옆에서 다시 찾음
+(function(){
+  var L=['core1','core2','core3','chars1','chars2','extra','voice','gev1','gev2','gev3','sound'],i=0,bad=[];
+  function err(m){var d=document.getElementById('lderr');d.style.display='block';d.textContent+=m+'\n'}
+  window.addEventListener('error',function(e){if(e.message)err('오류: '+e.message+(e.filename?' ('+e.filename.split('/').pop()+' '+e.lineno+'줄)':''))});
+  function load(n,dirs){if(!dirs.length){bad.push(n+'.js');err('못 찾은 파일: '+n+'.js');next();return}
+    var s=document.createElement('script');s.src=dirs[0]+n+'.js';s.onload=next;s.onerror=function(){s.remove();load(n,dirs.slice(1))};document.body.appendChild(s)}
+  var TIPS=['팁 · 설정에서 소리마다 볼륨을 따로 조절할 수 있어','팁 · 캐릭터 선택에서 +숫자가 붙은 캐릭터는 변형이 있어','팁 · 사전에서 스킬을 누르면 미리보기를 볼 수 있어','팁 · 박르노는 체력이 낮아지면 레퀴엠으로 각성해 · 사전에서 레퀴엠 기술도 미리 볼 수 있어'],t0=0,ready=0;
+  function bar(p,txt){document.getElementById('ldfill').style.width=Math.round(p*100)+'%';document.getElementById('ldpct').textContent=Math.round(p*100)+'%';if(txt)document.getElementById('ldtxt').textContent=txt}
+  var ti=0;setInterval(function(){var e=document.getElementById('ldtip');if(e)e.textContent=TIPS[ti++%TIPS.length]},2600);document.getElementById('ldtip').textContent=TIPS[0];ti=1;
+  function sndDone(n){var a=(typeof AUD!='undefined')&&AUD[n];if(!a)return false;if(a.ok)return true;var gen=(window.GENSFX||[]).indexOf(n)>=0;if(gen)return false;if(a.pool)return a.pool.every(function(x){return x.bad||x.error});return !!a.error}
+  function go(){if(!ready)return;var d=document.getElementById('ld');if(d.classList.contains('out'))return;d.classList.add('out');try{audioOn();SFX('click')}catch(e){}setTimeout(function(){d.style.display='none'},450)}
+  document.getElementById('ld').addEventListener('pointerdown',function(){if(ready)go();else if(t0&&performance.now()-t0>5000){ready=1;go()}});
+  function wait(){if(!t0)t0=performance.now();var N=((typeof SND!='undefined')?SND:[]).concat(['bgm_menu','bgm_battle','bgm_tour','bgm_final']),k=0;N.forEach(function(n){if(sndDone(n))k++});
+    var el=performance.now()-t0;bar(.3+.7*(k/Math.max(1,N.length)),'사운드 준비 중 '+k+' / '+N.length+(el>5000?'  (터치하면 바로 시작)':''));
+    if(k>=N.length||el>12000){ready=1;bar(1,'준비 완료');document.getElementById('ldgo').style.display='block';return}setTimeout(wait,150)}
+  function next(){bar(.3*i/L.length,'게임 파일 불러오는 중 '+i+' / '+L.length);if(i<L.length){var n=L[i++];load(n,['js/',''])}else if(bad.length)err('\n위 파일을 js 폴더 안에 넣었는지, 이름이 정확한지 확인해줘');else wait()}
+  next();
+})();
+</script>
+</body>
+</html>
