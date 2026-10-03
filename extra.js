@@ -6,6 +6,7 @@ const _updGE=update;update=function(dt){
   if(F&&(phase=='play'||phase=='demo'))F.forEach(f=>{if(f.dead)return;f.hist=f.hist||[];f.hist.push([f.x,f.y]);if(f.hist.length>100)f.hist.shift();
     if(f.d.k=='ge'&&!f.req&&f.hp<=40&&phase=='play'&&!CIN&&!TSTOP&&!MAD)geAwaken(f)});
   const co=CIN&&CIN.o,cs=co&&co.cds.slice(),cu=co&&co.ug;_updGE(dt);if(co&&CIN&&CIN.o==co&&co.cds.length==cs.length){co.cds=cs;co.ug=cu}
+  if(CIN&&F)F.forEach(f=>{if(f!=CIN.o&&f.flash>0)f.flash-=dt});
   if(CIN){if(phase!='play'&&phase!='demo'||CIN.o.dead||!F||F.indexOf(CIN.o)<0){CIN=null}else{CIN.t+=dt;if(CIN.tick(dt)===false)CIN=null}}};
 const _bannerGE=banner;banner=function(){if(CIN&&CIN.draw)CIN.draw();_bannerGE()};
 const _initGE=init;init=function(){CIN=null;SLOW=0;return _initGE.apply(this,arguments)};
