@@ -192,7 +192,7 @@ function wav(x,pk){fade(x,.003,.05);const s=(pk||.89)/peak(x),n=x.length,b=new A
   w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,SR,true);v.setUint32(28,SR*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
   for(let i=0;i<n;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,x[i]*s))*32767,true);return b}
 function dataURI(buf){const u=new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return 'data:audio/wav;base64,'+btoa(s)}
-const PK={jw_shot:.8,jw_kata:.8,jw_casing:.5,oni_step:.85,oni_heart:.8,wk_strike:.75,wk_hit:.8,pc_shape:.7,pc_trap:.75,ge_punch:.75,ge_launch:.8,h_flicker:.75,juggle:.7,whistle:.7,tv_gallop:.8,wm_gem:.75,rd_head:.7,rd_beep:.6,th_coin:.7};
+const PK={tr_beep:.45,tr_burst:.8,tr_strafe:.8,ez_bounce:.6,ez_msg:.6,jt_throw:.7,jt_hit:.75,hs_tap:.6,hs_chalk:.6,hs_paper:.65,sn_text:.5,sn_bone:.7,sn_warn:.55,kj_bump:.8,jw_shot:.8,jw_kata:.8,jw_casing:.5,oni_step:.85,oni_heart:.8,wk_strike:.75,wk_hit:.8,pc_shape:.7,pc_trap:.75,ge_punch:.75,ge_launch:.8,h_flicker:.75,juggle:.7,whistle:.7,tv_gallop:.8,wm_gem:.75,rd_head:.7,rd_beep:.6,th_coin:.7};
 function use(n,buf){
   if(AUD[n]&&AUD[n].ok)return;            // sounds 폴더에 진짜 파일이 있으면 그걸 사용
   let url;try{url=URL.createObjectURL(new Blob([buf],{type:'audio/wav'}))}catch(e){url=dataURI(buf)}
@@ -293,7 +293,105 @@ G.oni_ult=()=>{const d=3,buf=Z(d);[55,58.3,82.4,87.3].forEach(f=>place(buf,mul(s
 G.oni_step=()=>{const buf=Z(.4);place(buf,sat(ed(sweepEnv(85,40,.18),18),2.5),0,1);place(buf,ed(lp(noise(.1),400),30),0,.7);place(buf,ed(bp(noise(.15),400,1500),25),.02,.2);return verb(buf,.4,.2,2500)};
 G.oni_heart=()=>{const buf=Z(.6);[[0,1],[.17,.7]].forEach(([at,gn])=>{place(buf,sat(ed(sweepEnv(70,38,.14),22),2),at,gn);place(buf,ed(lp(noise(.06),200),40),at,.4*gn)});return verb(buf,.3,.12,1500)};
 G.oni_grab=()=>{const buf=Z(.7);for(let k=0;k<8;k++)place(buf,ed(bp(noise(.025),1200,6000),110),U(0,.15),U(.3,.6));place(buf,sat(ed(sweepEnv(140,50,.2),16),2.5),0,1);place(buf,growl(.5,80),.02,.8);return verb(buf,.5,.25,4000)};
+// ===== 때리는형태 (화난 괴물) =====
+function roar(d,f0,scr){const x=Z(d);let ph=0,ph2=0;for(let i=0;i<x.length;i++){const t=i/SR,u=t/d,f=f0*(1+.35*Math.sin(Math.PI*u))*(1+.05*(R()*2-1));ph+=f/SR;ph2+=f*2.02/SR;x[i]=((2*(ph%1)-1)+.5*(2*(ph2%1)-1))*(.55+.45*Math.sin(PI2*38*t))}
+  let v=add(bp(x,180,1600),bp(noise(d),400,2600),.7);v=sat(v,2.5);if(scr){let p3=0;add(v,T(d,t=>{p3+=PI2*(700+500*Math.sin(Math.PI*t/d))/SR;return Math.sin(p3)*(.5+.5*Math.sin(PI2*22*t))}),.25)}
+  return mul(v,t=>Math.min(1,t/.06)*Math.pow(Math.max(0,1-t/d),.6))}
+G.rg_roar=()=>{const buf=Z(1.6);place(buf,roar(1.3,62,1),0,1);place(buf,mul(lp(noise(1.3),160),t=>.6*Math.sin(Math.PI*t/1.3)),0,1);return verb(buf,1.2,.3,3500)};
+G.rg_rage=()=>{const d=2.2,buf=Z(d);place(buf,roar(1.8,50,1),.1,1);place(buf,sat(ed(sweepEnv(90,28,1),3),3),0,1);place(buf,mul(movBP(noise(1.5),200,3000,.2),t=>.35*Math.pow(t/1.5,1.5)),0,1);for(let k=0;k<5;k++)place(buf,sat(ed(sweepEnv(70,35,.3),12),2.5),.15+k*.3,.5);return verb(buf,1.6,.35,3500)};
+G.rg_charge=()=>{const d=.9,buf=Z(d);for(let k=0;k<6;k++)place(buf,sat(ed(sweepEnv(80,40,.15),20),2.5),k*.12,.6);place(buf,mul(movBP(noise(d),300,1800,.2),t=>.5*Math.min(1,t/.2)*Math.min(1,(d-t)/.2)),0,1);return verb(buf,.6,.2,3000)};
+G.rg_grab=()=>{const buf=Z(.6);place(buf,ed(lp(noise(.12),800),25),0,.9);place(buf,sat(ed(sweepEnv(130,60,.15),18),2),0,.8);place(buf,roar(.45,85,0),.03,.6);return verb(buf,.4,.2,3500)};
+G.rg_wall=()=>{const buf=Z(1.4);place(buf,sat(ed(sweepEnv(100,26,.7),5),3.5),0,1.3);for(let k=0;k<5;k++)place(buf,ed(bp(noise(.2),150,4500),12),U(0,.05),.6);for(let k=0;k<20;k++)place(buf,ed(bp(noise(.03),900,5000),80),U(.05,.7),U(.1,.3));place(buf,ed(lp(noise(.8),250),4),0,.7);return verb(buf,1.3,.35,3500)};
+G.rg_slam=()=>{const buf=Z(.9);place(buf,sat(ed(sweepEnv(95,30,.45),8),3),0,1.2);place(buf,ed(bp(noise(.15),150,3500),18),0,.8);for(let k=0;k<10;k++)place(buf,ed(bp(noise(.03),800,4500),80),U(.03,.4),U(.1,.25));return verb(buf,.8,.3,3500)};
+G.rg_leap=()=>{const buf=Z(.8);place(buf,sat(ed(sweepEnv(110,45,.2),14),2.5),0,.8);place(buf,mul(movBP(noise(.6),400,2000,.2),t=>.6*Math.sin(Math.PI*t/.6)),.05,1);place(buf,roar(.5,75,0),.0,.4);return verb(buf,.6,.25,4000)};
+G.rg_land=()=>{const d=1.8,buf=Z(d);place(buf,sat(mul(sweepEnv(80,22,1.2,.5),t=>Math.exp(-t*2.5)),3.5),0,1.4);place(buf,ed(lp(noise(1.2),300),3),0,.9);place(buf,ed(bp(noise(.25),200,5000),10),0,.7);for(let k=0;k<26;k++)place(buf,ed(bp(noise(.03),600,4500),70),U(.05,1),U(.08,.25));return verb(buf,1.6,.4,3000)};
+// ===== 토타디 (카메라 · 스피커 · 변기) =====
+G.tt_summon=()=>{const buf=Z(.9);place(buf,mul(sweepEnv(200,1600,.4,1.5),t=>.25*Math.pow(t/.4,1.2)),0,1);place(buf,mul(movBP(noise(.4),400,7000,.25),t=>.35*Math.pow(t/.4,2)),0,1);place(buf,sat(ed(sweepEnv(140,50,.25),14),2),.4,.8);place(buf,bell(1567.98,.5,6),.4,.25);place(buf,bell(2093,.45,7),.43,.15);return verb(buf,.7,.3,8000)};
+G.tt_charge=()=>{const d=.6,buf=Z(d);let ph=0;place(buf,T(d,t=>{ph+=PI2*(300+2600*Math.pow(t/d,1.6))/SR;return(Math.sin(ph)+.3*Math.sin(ph*2.01))*.35*Math.min(1,t/.05)}),0,1);[0,.18,.33,.44,.52].forEach(at=>place(buf,ed(sine(2400,.05),60),at,.2));return verb(buf,.4,.15,8000)};
+G.tt_beam=()=>{const d=.85,buf=Z(d);let ph=0;place(buf,mul(T(d,t=>{ph+=PI2*(110+8*Math.sin(PI2*30*t))/SR;let s=0;for(let k=1;k<9;k++)s+=Math.sin(ph*k)/k;return s}),t=>.4*Math.min(1,t/.02)*Math.min(1,(d-t)/.1)),0,1);
+  place(buf,mul(bp(noise(d),2500,8000),t=>.25*(.6+.4*Math.sin(PI2*50*t))*Math.min(1,(d-t)/.1)),0,1);place(buf,sat(ed(sweepEnv(300,80,.15),18),2),0,.6);return verb(buf,.5,.2,8000)};
+G.tt_spk=()=>{const buf=Z(.7);place(buf,ed(lp(noise(.02),2000),200),0,.6);place(buf,mul(sine(50,.4),t=>.6*Math.exp(-t*6)*(1-Math.exp(-t*80))),.03,1);place(buf,mul(bp(noise(.3),1000,6000),t=>.05*Math.exp(-t*6)),.03,1);place(buf,ed(sine(1000,.08),40),.25,.12);return verb(buf,.5,.2,6000)};
+G.tt_bass=()=>{const d=.7,buf=Z(d);place(buf,sat(mul(sweepEnv(95,38,d,.6),t=>Math.exp(-t*4.5)*(1-Math.exp(-t*200))),2.8),0,1.3);place(buf,ed(bp(noise(.04),100,1200),70),0,.6);let ph=0;place(buf,mul(T(.45,t=>{ph+=PI2*(55*(1+.5*Math.sin(PI2*8*t)))/SR;return Math.sign(Math.sin(ph))}),t=>.18*Math.exp(-t*5)),0,1);return verb(buf,.4,.15,3000)};
+G.tt_drop=()=>{const d=.5,buf=Z(d);place(buf,mul(sweepEnv(2200,700,d,.8),t=>.3*Math.min(1,t/.05)),0,1);place(buf,mul(movBP(noise(d),1500,600,.2),t=>.35*Math.pow(t/d,1.5)),0,1);return verb(buf,.4,.2,7000)};
+G.tt_crash=()=>{const buf=Z(1);place(buf,sat(ed(sweepEnv(140,45,.25),12),2.5),0,1);for(let k=0;k<6;k++)place(buf,ed(hp(noise(.3),2500),9),U(0,.04),.35);for(let k=0;k<40;k++)place(buf,ed(T(.1,t=>Math.sin(PI2*U(2500,7000)*t)),U(30,70)),U(.02,.5),U(.05,.15));place(buf,mul(movBP(noise(.4),3000,400,.25),t=>.4*Math.exp(-t*7)),0,1);return verb(buf,.8,.3,7000)};
+G.tt_flush=()=>{const d=1.5,buf=Z(d);place(buf,ed(bp(noise(.04),800,4000),80),0,.6);place(buf,mul(movBP(noise(1.3),600,2500,.3),t=>.6*Math.min(1,t/.15)*Math.pow(Math.max(0,1-t/1.3),.7)*(.7+.3*Math.sin(PI2*7*t))),.05,1);
+  for(let k=0;k<26;k++){const f0=U(200,600);place(buf,ed(sweepEnv(f0,f0*2.6,.05),45),U(.1,1.2),U(.1,.25))}place(buf,mul(lp(noise(1.2),250),t=>.4*Math.sin(Math.PI*t/1.2)),.1,1);return verb(buf,.8,.3,5000)};
+G.tt_vortex=()=>{const d=2.4,buf=Z(d);place(buf,mul(movBP(noise(d),300,1800,.3),t=>.7*Math.min(1,t/.3)*Math.min(1,(d-t)/.5)*(.75+.25*Math.sin(PI2*(3+t*3)*t))),0,1);place(buf,mul(lp(noise(d),180),t=>.6*Math.min(1,t/.4)*Math.min(1,(d-t)/.5)),0,1);
+  for(let k=0;k<40;k++){const f0=U(150,500);place(buf,ed(sweepEnv(f0,f0*2.2,.06),40),U(.2,2),U(.08,.2))}return verb(buf,1.4,.35,4000)};
+G.tt_geyser=()=>{const d=1.8,buf=Z(d);place(buf,sat(ed(sweepEnv(110,30,.8),4),3),0,1.2);place(buf,mul(movBP(noise(1.4),400,5000,.25),t=>.8*Math.min(1,t/.02)*Math.exp(-t*2.2)),0,1);for(let k=0;k<50;k++)place(buf,ed(bp(noise(.03),1500,7000),70),U(.1,1.4),U(.05,.18));place(buf,bell(1046.5,.8,4),.05,.15);return verb(buf,1.5,.4,6000)};
+// ===== 김민재 (축구 수비) =====
+function crowdN(d){const x=Z(d);[400,700,1100,1600,2300].forEach((c,k)=>{const r=U(.3,.8);add(x,mul(bp(noise(d),c*.7,c*1.3),t=>.4+.3*Math.sin(PI2*r*t+k)),.5)});return x}
+G.kj_whistle=()=>{const buf=Z(.9);let ph=0;place(buf,mul(T(.7,t=>{ph+=PI2*(2650+120*Math.sign(Math.sin(PI2*28*t)))/SR;return Math.sin(ph)+.3*Math.sin(ph*2)}),t=>.35*Math.min(1,t/.02)*Math.min(1,(.7-t)/.05)),0,1);place(buf,mul(bp(noise(.7),2000,6000),t=>.12*Math.min(1,(.7-t)/.05)),0,1);return verb(buf,.6,.2,8000)};
+G.kj_slide=()=>{const d=.6,buf=Z(d);place(buf,mul(bp(noise(d),500,4000),t=>.7*Math.min(1,t/.03)*Math.pow(1-t/d,.8)*(.7+.3*Math.sin(PI2*30*t))),0,1);place(buf,mul(lp(noise(d),300),t=>.4*Math.exp(-t*4)),0,1);return verb(buf,.4,.15,5000)};
+G.kj_bump=()=>{const buf=Z(.4);place(buf,sat(ed(sweepEnv(120,55,.18),18),2.5),0,1);place(buf,ed(lp(noise(.12),700),30),0,.8);place(buf,ed(bp(noise(.05),300,1500),50),.01,.4);return verb(buf,.3,.12,3000)};
+G.kj_block=()=>{const buf=Z(.35);place(buf,sat(ed(sweepEnv(260,90,.1),35),2.5),0,.9);place(buf,ed(bp(noise(.04),800,5000),90),0,.8);place(buf,ed(sine(520,.12),30),0,.2);return verb(buf,.3,.12,6000)};
+G.kj_kick=()=>{const buf=Z(.9);place(buf,sat(ed(sweepEnv(200,60,.16),24),2.5),0,1);place(buf,ed(bp(noise(.04),900,5000),90),0,.8);place(buf,mul(movBP(noise(.5),2500,700,.2),t=>.35*Math.exp(-t*4)),.02,1);place(buf,mul(crowdN(.6),t=>.25*Math.sin(Math.PI*t/.6)),.15,1);return verb(buf,.6,.25,5000)};
+G.kj_crowd=()=>{const d=2,buf=Z(d);place(buf,mul(crowdN(d),t=>.8*Math.min(1,t/.35)*Math.min(1,(d-t)/.6)),0,1);[0,.5,1].forEach(at=>place(buf,ed(lp(noise(.08),300),30),.2+at,.25));return verb(buf,1.2,.4,4000)};
+G.kj_flag=()=>{const buf=Z(.5);place(buf,mul(bp(noise(.18),800,5000),t=>.6*Math.sin(Math.PI*t/.18)*(.6+.4*Math.sin(PI2*40*t))),0,1);place(buf,ed(hp(noise(.02),2000),200),.15,.6);return verb(buf,.3,.12,7000)};
+G.kj_mark=()=>{const buf=Z(.6);place(buf,ed(sweepEnv(500,900,.1),20),0,.3);place(buf,ed(sweepEnv(700,1300,.1),20),.08,.3);place(buf,sat(ed(sweepEnv(110,50,.2),14),2),.05,.6);return verb(buf,.4,.15,6000)};
+// ===== 샌즈 (8비트) =====
+const sqw=(f,d,duty)=>T(d,t=>((f*t)%1)<(duty||.5)?1:-1);
+function chip(d,rate){const x=Z(d);let v=0;const st=Math.max(1,Math.floor(SR/rate));for(let i=0;i<x.length;i++){if(i%st==0)v=R()*2-1;x[i]=v}return x}
+G.sn_bone=()=>{const buf=Z(.3);let ph=0;place(buf,mul(T(.14,t=>{ph+=(900-4000*t)/SR;return(ph%1)<.5?1:-1}),t=>.35*Math.exp(-t*14)),0,1);place(buf,mul(chip(.06,6000),t=>.25*Math.exp(-t*40)),0,1);return buf};
+G.sn_warn=()=>{const buf=Z(.6);[0,.14,.28].forEach(at=>place(buf,mul(sqw(1320,.09,.5),t=>.25),at,1));return buf};
+G.sn_sweep=()=>{const buf=Z(.6);let ph=0;place(buf,mul(T(.5,t=>{ph+=(300+500*t)/SR;return(ph%1)<.25?1:-1}),t=>.22*Math.min(1,t/.02)*Math.min(1,(.5-t)/.1)),0,1);place(buf,mul(chip(.5,3000),t=>.15*Math.sin(Math.PI*t/.5)),0,1);return buf};
+G.sn_blue=()=>{const buf=Z(.6);place(buf,mul(sqw(988,.08,.5),t=>.25),0,1);place(buf,mul(sqw(1318.5,.18,.5),t=>.25*Math.exp(-t*8)),.08,1);let ph=0;place(buf,mul(T(.3,t=>{ph+=(400-1100*t)/SR;return(ph%1)<.5?1:-1}),t=>.2*Math.exp(-t*6)),.2,1);return buf};
+G.sn_slam=()=>{const buf=Z(.45);place(buf,mul(chip(.35,2500),t=>.5*Math.exp(-t*10)),0,1);let ph=0;place(buf,mul(T(.25,t=>{ph+=(160-400*t)/SR;return(ph%1)<.5?1:-1}),t=>.4*Math.exp(-t*10)),0,1);return buf};
+G.sn_gbc=()=>{const d=.55,buf=Z(d);place(buf,mul(chip(d,1500),t=>.3*Math.pow(t/d,1.5)),0,1);let ph=0;place(buf,mul(T(d,t=>{ph+=(200+900*t/d)/SR;return(ph%1)<.5?1:-1}),t=>.18*Math.pow(t/d,1.2)),0,1);return buf};
+G.sn_gbf=()=>{const d=.75,buf=Z(d);place(buf,mul(chip(d,4000),t=>.55*Math.min(1,t/.01)*Math.exp(-t*3.5)),0,1);place(buf,mul(chip(d,700),t=>.4*Math.exp(-t*4)),0,1);let ph=0;place(buf,mul(T(.4,t=>{ph+=(120-150*t)/SR;return(ph%1)<.5?1:-1}),t=>.35*Math.exp(-t*5)),0,1);return buf};
+G.sn_text=()=>{const buf=Z(.06);place(buf,mul(sqw(220,.045,.5),t=>.3*Math.min(1,(.045-t)/.01)),0,1);return buf};
+G.sn_miss=()=>{const buf=Z(.3);let ph=0;place(buf,mul(T(.18,t=>{ph+=(600+1800*t)/SR;return(ph%1)<.5?1:-1}),t=>.18*Math.exp(-t*8)),0,1);place(buf,mul(chip(.15,8000),t=>.12*Math.sin(Math.PI*t/.15)),0,1);return buf};
+G.sn_ult=()=>{const d=2,buf=Z(d);[0,.4,.8].forEach((at,i)=>place(buf,mul(sqw([110,103.8,98][i],.5,.25),t=>.25*Math.exp(-t*3)),at,1));place(buf,mul(T(1.2,t=>Math.sin(PI2*55*t)),t=>.4*Math.exp(-t*2)),.8,1);place(buf,mul(chip(.4,1200),t=>.2*Math.exp(-t*6)),.8,1);return verb(buf,1,.25,4000)};
+// ===== 최해솔 (학교) =====
+const chime=(f,d)=>T(d,t=>(Math.sin(PI2*f*t)+.35*Math.sin(PI2*f*2*t)*Math.exp(-t*3)+.15*Math.sin(PI2*f*3.01*t)*Math.exp(-t*5))*Math.exp(-t*2.2)*Math.min(1,t/.004));
+G.hs_bell=()=>{const buf=Z(2.6);[[659.25,0],[523.25,.42],[587.33,.84],[392,1.26]].forEach(([f,at])=>place(buf,chime(f,1.3),at,.38));return verb(buf,1.2,.35,6000)};
+G.hs_run=()=>{const buf=Z(1);for(let k=0;k<8;k++){place(buf,ed(lp(noise(.06),900),40),k*.11,.6);place(buf,ed(bp(noise(.03),1500,5000),80),k*.11+.005,.3)}place(buf,mul(bp(noise(.9),400,1800),t=>.12*Math.sin(Math.PI*t/.9)),0,1);return verb(buf,.4,.15,5000)};
+G.hs_bread=()=>{const buf=Z(.8);[0,.22,.42].forEach(at=>{place(buf,ed(bp(noise(.08),800,4500),40),at,.6);for(let k=0;k<5;k++)place(buf,ed(hp(noise(.008),2500),500),at+U(0,.06),.3)});place(buf,bell(1318.5,.4,7),.55,.18);return verb(buf,.4,.15,6000)};
+G.hs_paper=()=>{const buf=Z(.4);place(buf,mul(bp(noise(.3),1500,7000),t=>.6*Math.sin(Math.PI*t/.3)*(.5+.5*Math.sin(PI2*35*t))),0,1);return verb(buf,.3,.12,8000)};
+G.hs_grade=()=>{const buf=Z(.6);place(buf,mul(bp(noise(.22),2500,6500),t=>.5*Math.sin(Math.PI*t/.22)*(.6+.4*Math.sin(PI2*20*t))),0,1);place(buf,ed(lp(noise(.05),700),50),.24,.6);place(buf,bell(880,.3,10),.25,.15);return verb(buf,.4,.15,7000)};
+G.hs_chalk=()=>{const buf=Z(.3);place(buf,mul(movBP(noise(.15),1500,4000,.2),t=>.4*Math.sin(Math.PI*t/.15)),0,1);return verb(buf,.2,.1,8000)};
+G.hs_tap=()=>{const buf=Z(.25);place(buf,ed(bp(noise(.03),2000,7000),120),0,.8);place(buf,ed(T(.06,t=>Math.sin(PI2*2800*t)),90),0,.2);return verb(buf,.2,.1,8000)};
+G.hs_slam=()=>{const buf=Z(1);place(buf,sat(ed(sweepEnv(150,45,.3),12),2.5),0,1);place(buf,ed(bp(noise(.12),200,4000),22),0,.9);place(buf,ed(lp(noise(.4),400),9),0,.5);return verb(buf,.9,.35,4000)};
+G.hs_grow=()=>{const buf=Z(1);[523.25,659.25,783.99,1046.5].forEach((f,i)=>place(buf,bell(f,.6,5),i*.07,.25));place(buf,mul(sweepEnv(300,900,.3,1),t=>.1*Math.sin(Math.PI*t/.3)),0,1);return verb(buf,.8,.3,8000)};
+// ===== 어쩌라고 =====
+G.ez_say=()=>{const buf=Z(.6);let ph=0;place(buf,mul(T(.32,t=>{ph+=PI2*(620-260*t/.32+40*Math.sin(PI2*9*t))/SR;return Math.sin(ph)+.4*Math.sin(ph*2)+.2*Math.sin(ph*3)}),t=>.35*Math.min(1,t/.02)*Math.min(1,(.32-t)/.06)),0,1);place(buf,ed(sine(1500,.1),25),0,.15);place(buf,bell(1046.5,.3,9),.28,.15);return verb(buf,.4,.15,6000)};
+G.ez_shield=()=>{const buf=Z(.8);place(buf,mul(sweepEnv(300,1400,.25,1.5),t=>.25*Math.sin(Math.PI*t/.25)),0,1);place(buf,bell(1568,.6,5),.2,.2);place(buf,bell(2093,.5,6),.24,.15);place(buf,mul(bp(noise(.4),2500,7000),t=>.1*Math.exp(-t*6)),.2,1);return verb(buf,.6,.25,8000)};
+G.ez_reflect=()=>{const buf=Z(.4);place(buf,ed(sweepEnv(500,1600,.08,.6),30),0,.5);place(buf,ed(T(.2,t=>Math.sin(PI2*2200*t)+.5*Math.sin(PI2*3300*t)),20),0,.2);place(buf,ed(bp(noise(.03),1500,6000),100),0,.4);return verb(buf,.3,.12,8000)};
+G.ez_letter=()=>{const buf=Z(.5);[0,.07,.14,.21].forEach((at,i)=>place(buf,mul(movBP(noise(.15),800,3500,.2),t=>.4*Math.sin(Math.PI*t/.15)),at,1));return verb(buf,.3,.12,7000)};
+G.ez_bounce=()=>{const buf=Z(.3);let ph=0;place(buf,mul(T(.15,t=>{ph+=PI2*(220+900*Math.exp(-t*30))/SR;return Math.sin(ph)}),t=>.5*Math.exp(-t*18)),0,1);place(buf,ed(bp(noise(.02),1500,5000),150),0,.3);return verb(buf,.2,.1,6000)};
+G.ez_msg=()=>{const buf=Z(.35);place(buf,bell(1318.5,.25,12),0,.35);place(buf,bell(1760,.25,12),.07,.3);return verb(buf,.3,.12,8000)};
+G.ez_stamp=()=>{const buf=Z(1);place(buf,sat(ed(sweepEnv(140,40,.35),10),3),0,1.2);place(buf,ed(lp(noise(.15),900),25),0,.8);place(buf,ed(bp(noise(.06),1500,6000),60),0,.4);place(buf,bell(1046.5,.5,6),.05,.12);return verb(buf,.8,.3,4000)};
+G.ez_ult=()=>{const buf=Z(1.2);[0,.08,.16,.24,.32].forEach((at,i)=>place(buf,bell([1318.5,1567.98,1760,2093,2637][i],.4,8),at,.22));place(buf,mul(sweepEnv(200,900,.5,1.4),t=>.15*Math.sin(Math.PI*t/.5)),0,1);return verb(buf,1,.3,8000)};
+// ===== 제트 (바람) =====
+function windN(d,c0,c1,q){return movBP(noise(d),c0,c1,q||.2)}
+G.jt_dash=()=>{const d=.5,buf=Z(d);place(buf,mul(windN(d,500,4500,.15),t=>.9*Math.min(1,t/.02)*Math.pow(1-t/d,1.4)),0,1);place(buf,mul(lp(noise(d),300),t=>.4*Math.exp(-t*8)),0,1);place(buf,ed(hp(noise(.02),3000),200),0,.3);return verb(buf,.5,.2,8000)};
+G.jt_up=()=>{const d=.9,buf=Z(d);place(buf,mul(windN(d,300,3000,.25),t=>.8*Math.min(1,t/.08)*Math.pow(1-t/d,1)),0,1);place(buf,mul(sweepEnv(200,700,.5,1),t=>.12*Math.sin(Math.PI*t/.5)),0,1);place(buf,sat(ed(sweepEnv(110,50,.15),20),2),0,.4);return verb(buf,.7,.3,7000)};
+G.jt_smoke=()=>{const buf=Z(1.4);place(buf,ed(lp(noise(.15),1200),20),0,.7);place(buf,mul(bp(noise(1.2),1500,7000),t=>.45*Math.min(1,t/.02)*Math.exp(-t*2.2)),0,1);place(buf,sat(ed(sweepEnv(120,50,.2),14),2),0,.5);return verb(buf,1,.3,7000)};
+G.jt_ult=()=>{const d=1.6,buf=Z(d);for(let k=0;k<5;k++){const f=U(2400,3200);place(buf,ed(T(.6,t=>Math.sin(PI2*f*t)+.6*Math.sin(PI2*f*1.52*t)+.3*Math.sin(PI2*f*2.31*t)),6),.08+k*.08,.15)}
+  place(buf,mul(windN(1.2,200,5000,.2),t=>.6*Math.pow(t/1.2,1.2)*Math.min(1,(1.2-t)/.1)),0,1);place(buf,sat(ed(sweepEnv(90,40,.6),5),2.5),.5,.7);return verb(buf,1.4,.35,8000)};
+G.jt_throw=()=>{const d=.35,buf=Z(d);place(buf,mul(windN(d,2500,900,.12),t=>.8*Math.min(1,t/.01)*Math.exp(-t*7)),0,1);place(buf,ed(T(.2,t=>Math.sin(PI2*3100*t)+.5*Math.sin(PI2*4650*t)),18),0,.12);return verb(buf,.3,.12,8000)};
+G.jt_hit=()=>{const buf=Z(.35);place(buf,sat(ed(sweepEnv(260,90,.1),35),2),0,.8);place(buf,ed(bp(noise(.04),1200,6000),110),0,.7);place(buf,ed(T(.25,t=>Math.sin(PI2*2700*t)),25),0,.12);return verb(buf,.3,.12,6000)};
+G.jt_fan=()=>{const buf=Z(.8);[0,.03,.06,.09,.12].forEach(at=>place(buf,mul(windN(.3,2800,800,.12),t=>.5*Math.exp(-t*8)),at,1));place(buf,ed(T(.5,t=>Math.sin(PI2*3300*t)+.5*Math.sin(PI2*4900*t)),9),0,.15);return verb(buf,.6,.25,8000)};
+G.jt_slash=()=>{const buf=Z(.45);place(buf,mul(windN(.2,1500,6000,.12),t=>.7*Math.sin(Math.PI*t/.2)),0,1);place(buf,ed(T(.3,t=>Math.sin(PI2*3500*t)+.6*Math.sin(PI2*5200*t)),14),.08,.2);return verb(buf,.35,.15,8000)};
+// ===== 테러리스트 (밀리터리) =====
+const gunshot=(g0)=>{const x=Z(.4);place(x,sat(ed(bp(noise(.08),300,6000),45),3),0,1);place(x,sat(ed(sweepEnv(180,50,.12),30),2.5),0,.9);place(x,ed(hp(noise(.01),4000),600),0,.6);place(x,mul(lp(noise(.35),700),t=>.3*Math.exp(-t*9)),.01,1);return x};
+G.tr_burst=()=>{const buf=Z(.7);[0,.07,.14].forEach(at=>place(buf,gunshot(),at,.85));return verb(buf,.6,.25,4500)};
+G.tr_sand=()=>{const buf=Z(.5);place(buf,ed(lp(noise(.15),500),25),0,.9);place(buf,mul(bp(noise(.2),800,4000),t=>.25*Math.exp(-t*14)),0,1);place(buf,sat(ed(sweepEnv(90,45,.12),25),2),0,.6);return verb(buf,.3,.12,3000)};
+G.tr_c4=()=>{const buf=Z(.5);place(buf,ed(bp(noise(.03),600,3000),80),0,.7);place(buf,ed(T(.08,t=>Math.sin(PI2*900*t)),40),.02,.3);place(buf,mul(bp(noise(.12),1500,5000),t=>.2*Math.sin(Math.PI*t/.12)),.1,1);return verb(buf,.3,.12,5000)};
+G.tr_beep=()=>{const buf=Z(.12);place(buf,mul(T(.07,t=>Math.sign(Math.sin(PI2*2400*t))),t=>.25),0,1);return buf};
+G.tr_boom=()=>{const d=2,buf=Z(d);place(buf,sat(mul(sweepEnv(85,22,1.4,.5),t=>Math.exp(-t*2.6)),3.5),0,1.4);place(buf,sat(ed(bp(noise(.4),100,5000),8),2.5),0,1);place(buf,ed(lp(noise(1.6),300),2.2),0,.9);for(let k=0;k<20;k++)place(buf,ed(bp(noise(.04),700,5000),60),U(.05,1),U(.05,.2));return verb(buf,1.8,.4,3000)};
+G.tr_heli=()=>{const d=2.6,buf=Z(d);let ph=0;const th=T(d,t=>{ph+=12.5/SR;const k=(ph%1);return Math.exp(-k*14)});const n=lp(noise(d),500),hi=bp(noise(d),1500,4000);
+  for(let i=0;i<buf.length;i++){const t=i/SR,e=Math.min(1,t/.8)*Math.min(1,(d-t)/.4);buf[i]=(n[i]*(.3+th[i]*1.4)+hi[i]*.15*th[i]+Math.sin(PI2*42*t)*.15)*e}return verb(buf,1,.25,3000)};
+G.tr_strafe=()=>{const d=.9,buf=Z(d);for(let k=0;k<28;k++)place(buf,mul(gunshot(),t=>1),k*.03,.35);place(buf,mul(sweepEnv(900,700,d,1),t=>.08*Math.min(1,(d-t)/.1)),0,1);return verb(buf,.8,.3,4000)};
+G.tr_rope=()=>{const d=.8,buf=Z(d);place(buf,mul(bp(noise(d),1200,5000),t=>.5*Math.min(1,t/.05)*Math.min(1,(d-t)/.15)*(.7+.3*Math.sin(PI2*45*t))),0,1);place(buf,mul(sweepEnv(1400,900,d,1),t=>.06),0,1);return verb(buf,.4,.15,6000)};
+G.tr_radio=()=>{const d=.9,buf=Z(d);place(buf,ed(hp(noise(.03),2000),80),0,.5);place(buf,mul(bp(noise(.6),1200,3200),t=>.35*(.5+.5*Math.sign(Math.sin(PI2*7*t)))),.05,1);place(buf,mul(T(.12,t=>Math.sin(PI2*1600*t)),t=>.2),.7,1);return verb(buf,.3,.1,4000)};
+G.tr_land=()=>{const buf=Z(.8);place(buf,sat(ed(sweepEnv(120,40,.3),10),3),0,1.1);place(buf,ed(lp(noise(.2),600),18),0,.8);place(buf,ed(bp(noise(.05),800,4000),60),0,.4);return verb(buf,.6,.25,3000)};
 window.GENSFX=Object.keys(G);
-function run(){const L=Object.keys(G);let i=0;const nx=()=>{if(i>=L.length)return;const n=L[i++];try{if(!(AUD[n]&&AUD[n].ok)&&!(window.GECLIP&&GECLIP[n])){seed=7+i*101;use(n,wav(G[n](),PK[n]))}}catch(e){SERR='효과음 생성 실패: '+n}setTimeout(nx,30)};nx()}
-setTimeout(run,900);
+// 만들기 순서 : 지금 싸우는 캐릭터 소리를 먼저 · 로딩을 건너뛰어도 게임하면서 끝까지 계속 만듦
+const GL=Object.keys(G),GI={};GL.forEach((n,i)=>GI[n]=i+1);let GQ=GL.slice(),GDONE=0;
+window.GENPRI=names=>{const want=names.filter(n=>GI[n]&&GQ.includes(n));if(!want.length)return;GQ=want.concat(GQ.filter(n=>!want.includes(n)))};
+window.GENSTAT=()=>[GDONE,GL.length];
+function run(){const nx=()=>{if(!GQ.length)return;const n=GQ.shift();GDONE++;try{if(!(AUD[n]&&AUD[n].ok)&&!(window.GECLIP&&GECLIP[n])){seed=7+GI[n]*101;use(n,wav(G[n](),PK[n]))}}catch(e){SERR='효과음 생성 실패: '+n}
+  const busy=typeof phase!='undefined'&&(phase=='play'||phase=='cd');setTimeout(nx,busy?160:15)};nx()}
+setTimeout(run,600);
 })();

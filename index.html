@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>JS BALL BATTLE3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cinzel:wght@700&family=Russo+One&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Press+Start+2P&family=Cinzel:wght@700&family=Russo+One&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
+<link rel="stylesheet" href="ut.css">
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -60,7 +63,7 @@
 <script>
 // js 파일을 차례로 불러옴 : js 폴더에 없으면 index.html 옆에서 다시 찾음
 (function(){
-  var L=['core1','core2','core3','chars1','chars2','extra','extra2','extra3','extra4','extra5','extra6','voice','gev1','gev2','gev3','sound'],i=0,bad=[];
+  var L=['core1','core2','core3','chars1','chars2','extra','extra2','extra3','extra4','extra5','extra6','extra7','extra8','extra9','extra10','fix1','extra11','extra12','extra13','extra14','ui','voice','gev1','gev2','gev3','sound'],i=0,bad=[];
   function err(m){var d=document.getElementById('lderr');d.style.display='block';d.textContent+=m+'\n'}
   window.addEventListener('error',function(e){if(e.message)err('오류: '+e.message+(e.filename?' ('+e.filename.split('/').pop()+' '+e.lineno+'줄)':''))});
   function load(n,dirs){if(!dirs.length){bad.push(n+'.js');err('못 찾은 파일: '+n+'.js');next();return}
@@ -72,8 +75,8 @@
   function go(){if(!ready)return;var d=document.getElementById('ld');if(d.classList.contains('out'))return;d.classList.add('out');try{audioOn();SFX('click')}catch(e){}setTimeout(function(){d.style.display='none'},450)}
   document.getElementById('ld').addEventListener('pointerdown',function(){if(ready)go();else if(t0&&performance.now()-t0>5000){ready=1;go()}});
   function wait(){if(!t0)t0=performance.now();var N=((typeof SND!='undefined')?SND:[]).concat(['bgm_menu','bgm_battle','bgm_tour','bgm_final']),k=0;N.forEach(function(n){if(sndDone(n))k++});
-    var el=performance.now()-t0;bar(.3+.7*(k/Math.max(1,N.length)),'사운드 준비 중 '+k+' / '+N.length+(el>5000?'  (터치하면 바로 시작)':''));
-    if(k>=N.length||el>12000){ready=1;bar(1,'준비 완료');document.getElementById('ldgo').style.display='block';return}setTimeout(wait,150)}
+    var el=performance.now()-t0;bar(.3+.7*(k/Math.max(1,N.length)),'사운드 준비 중 '+k+' / '+N.length+'');
+    if(k>=N.length||el>2500){ready=1;bar(1,k>=N.length?'준비 완료':'준비 완료 · 남은 사운드는 게임하면서 계속 만들어져');document.getElementById('ldgo').style.display='block';return}setTimeout(wait,150)}
   function next(){bar(.3*i/L.length,'게임 파일 불러오는 중 '+i+' / '+L.length);if(i<L.length){var n=L[i++];load(n,['js/',''])}else if(bad.length)err('\n위 파일을 js 폴더 안에 넣었는지, 이름이 정확한지 확인해줘');else wait()}
   next();
 })();

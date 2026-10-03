@@ -325,7 +325,7 @@ function step(dt){
     if(f.x>A-f.r){f.x=A-f.r;f.dx=-Math.abs(f.dx);w=0}
     if(f.y<f.r){f.y=f.r;f.dy=Math.abs(f.dy);w=1}
     if(f.y>A-f.r){f.y=A-f.r;f.dy=-Math.abs(f.dy);w=1}
-    if(w>=0){f.sq=1;f.sa=w?Math.PI/2:0;spark(f.x,f.y,'dust',4,110);wallHit(f)}
+    if(f.wcd>0)f.wcd-=dt;if(w>=0&&!(f.wcd>0)){f.wcd=.3;f.sq=1;f.sa=w?Math.PI/2:0;spark(f.x,f.y,'dust',4,110);wallHit(f)}
     f.tr.push([f.x,f.y]);
     const mx=f.dash>0?14:0;while(f.tr.length>mx)f.tr.shift();
     if(f.slow>0&&Math.random()<dt*20)Pt.push({x:f.x+rnd(-20,20),y:f.y+rnd(-20,20),vx:0,vy:-30,l:.5,m:.5,sh:1,rot:0,vr:3,col:'#e3f6ff',r:4});

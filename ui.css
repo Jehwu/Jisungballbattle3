@@ -1,0 +1,111 @@
+/* ===== ui.css : 화면 애니메이션 ===== */
+:root{--ease:cubic-bezier(.2,.9,.25,1.05);--pop:cubic-bezier(.2,1.6,.4,1)}
+/* 공통 : 물결 */
+.btn,.hb,.mc,.dsk,.back,#mode button,#vrow button,.ts,#tsize button,.vreset,#dclose{position:relative;overflow:hidden}
+.rip{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.45),rgba(255,255,255,0) 60%);transform:scale(0);animation:rip .65s ease-out forwards;pointer-events:none;z-index:3}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+/* 차례로 나타나기 */
+.uin{animation:uin .5s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes uin{from{opacity:0;transform:translateY(16px) scale(.94)}}
+.scr.on>.sh,#menu.on>.sh{animation:shin .45s var(--ease) both}
+@keyframes shin{from{opacity:0;transform:translateX(-24px)}}
+.sh b{display:inline-block;position:relative}
+.sh b:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:linear-gradient(90deg,var(--ac),transparent);transform-origin:left;animation:ul .6s .15s var(--ease) both}
+@keyframes ul{from{transform:scaleX(0)}}
+.back{transition:transform .2s}.back:active{transform:translateX(-4px)}
+/* 메인 로고 */
+#hub .logo{animation:lgin .9s var(--pop) both,flt 4s 1s ease-in-out infinite}
+@keyframes lgin{from{opacity:0;transform:scale(.6) translateY(-20px);filter:blur(8px)}}
+@keyframes flt{50%{transform:translateY(-6px)}}
+.logo span,.logo em{background:linear-gradient(110deg,#ffb100 0%,#ffcf3f 35%,#fff8dc 50%,#ffcf3f 65%,#ffb100 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:shine 3.2s linear infinite}
+@keyframes shine{from{background-position:120% 0}to{background-position:-130% 0}}
+#hub .sub{animation:fadein 1s .5s both;letter-spacing:.6em}
+@keyframes fadein{from{opacity:0;letter-spacing:1.2em}}
+/* 메인 버튼 */
+.hb{transition:transform .2s var(--ease),box-shadow .2s}
+.hb:before{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-20deg);animation:sweep 3.5s ease-in-out infinite}
+.hb:nth-child(2):before{animation-delay:.6s}.hb:nth-child(3):before{animation-delay:1.2s}
+@keyframes sweep{0%,60%{left:-60%}100%{left:130%}}
+.hb.pri{animation:prig 1.8s ease-in-out infinite}
+.hb.pri.uin{animation:uin .5s var(--ease) both,prig 1.8s .6s ease-in-out infinite;animation-delay:var(--d,0s),calc(var(--d,0s) + .6s)}
+@keyframes prig{50%{box-shadow:0 0 26px rgba(255,207,63,.55);filter:brightness(1.08)}}
+.hb b{transition:letter-spacing .25s}.hb:hover b{letter-spacing:.06em}
+.hb:hover{transform:translateX(6px)}
+/* 모드 카드 */
+.mc{transition:transform .2s var(--ease),border-color .2s}
+.mc:hover{transform:translateX(6px);border-color:var(--ac)}
+.mc i{animation:icp 2.4s ease-in-out infinite}
+@keyframes icp{50%{transform:scale(1.12);text-shadow:0 0 14px currentColor}}
+.mc:before{content:"";position:absolute;top:0;bottom:0;width:30%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.1),transparent);transform:skewX(-20deg);animation:sweep 4s ease-in-out infinite}
+/* 캐릭터 칸 */
+.tile{transition:transform .2s var(--ease),background .15s,border-color .15s,box-shadow .2s}
+.tile:hover{transform:translateY(-3px)}
+.tile .ic{transition:transform .3s var(--pop)}
+.tile:hover .ic{transform:scale(1.12) rotate(-4deg)}
+.tile.act{box-shadow:0 0 0 1px var(--h),0 0 18px -4px var(--c);animation:tglow 1.4s ease-in-out infinite}
+.tile.act .ic{animation:bob 1.2s ease-in-out infinite}
+@keyframes tglow{50%{box-shadow:0 0 0 1px var(--h),0 0 26px -2px var(--c)}}
+@keyframes bob{50%{transform:translateY(-3px) scale(1.06)}}
+.tile .vb{animation:vbp 2s ease-in-out infinite}
+@keyframes vbp{50%{transform:scale(1.15)}}
+/* 선택 슬롯 */
+.slot{transition:transform .25s var(--ease),background .2s}
+.slot.on{animation:sbr 1.6s ease-in-out infinite}
+@keyframes sbr{50%{box-shadow:0 0 22px -6px var(--c)}}
+.slot.bump .ic{animation:spop .45s var(--pop)}
+.slot.bump b{animation:tpop .4s var(--ease)}
+@keyframes spop{0%{transform:scale(.4) rotate(-20deg);opacity:0}}
+@keyframes tpop{from{opacity:0;transform:translateY(8px)}}
+.slot .ic{animation:flt 3s ease-in-out infinite}
+.vsm{animation:vsp 1.2s ease-in-out infinite;color:var(--ac)!important;text-shadow:0 0 10px rgba(255,207,63,.6)}
+@keyframes vsp{50%{transform:scale(1.25)}}
+#vrow button{transition:transform .2s var(--ease),background .2s}#vrow button.on{animation:prig 1.6s infinite}
+/* 버튼 */
+.btn{transition:transform .15s var(--ease),filter .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.btn.pri:before{content:"";position:absolute;top:0;bottom:0;width:30%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:sweep 2.8s ease-in-out infinite}
+#start{animation:prig 1.6s ease-in-out infinite}
+/* 사전 */
+.dsk{transition:transform .2s var(--ease),border-color .2s}
+.dsk:hover{transform:translateX(5px);border-color:#3a4050}
+.dsk.u{border-color:#4a3d12;background:linear-gradient(90deg,rgba(255,207,63,.08),#0d0f15 60%)}
+.dsk.u i{animation:icp 1.8s ease-in-out infinite}
+.dsk:after{transition:color .2s}.dsk:hover:after{color:var(--ac)}
+#dic{animation:lgin .7s var(--pop) both,flt 3s 1s ease-in-out infinite}
+#dhex{animation:hexin .8s .2s both}
+@keyframes hexin{from{opacity:0;transform:scale(.85)}}
+#dname{animation:tpop .4s var(--ease)}
+/* HUD */
+#hud.drop .p{animation:hudd .55s var(--ease) both}
+#hud.drop .p:nth-child(2){animation-delay:.08s}#hud.drop .p:nth-child(3){animation-delay:.16s}
+@keyframes hudd{from{opacity:0;transform:translateY(-30px)}}
+.bar i{transition:width .15s}
+.bar:after{content:"";position:absolute;top:0;bottom:0;width:30%;left:-40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:sweep 3s ease-in-out infinite}
+.chip.rdy{animation:chp .8s ease-in-out infinite alternate}
+@keyframes chp{to{box-shadow:0 0 10px var(--ac)}}
+/* 결과 화면 */
+#msg:before{content:"";position:absolute;width:160vmax;height:160vmax;left:50%;top:50%;margin:-80vmax 0 0 -80vmax;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--wc,#ffcf3f) 22%,transparent) 0 8deg,transparent 8deg 20deg);animation:rays 18s linear infinite;opacity:.55;pointer-events:none;-webkit-mask:radial-gradient(circle,#000 10%,transparent 55%);mask:radial-gradient(circle,#000 10%,transparent 55%)}
+@keyframes rays{to{transform:rotate(360deg)}}
+#msg>*{position:relative}
+#msg.on #mt{animation:pop .6s cubic-bezier(.2,1.5,.4,1),mtg 2s .6s ease-in-out infinite}
+@keyframes mtg{50%{text-shadow:0 0 30px var(--wc,#ffcf3f)}}
+#msg.on .btns .btn{animation:uin .5s var(--ease) both}
+#msg.on .btns .btn:nth-child(1){animation-delay:.35s}#msg.on .btns .btn:nth-child(2){animation-delay:.45s}#msg.on .btns .btn:nth-child(3){animation-delay:.55s}
+#cfm.on .cbox{animation:pop .35s var(--pop)}
+/* 토너먼트 */
+#bracket.on,#champ.on{animation:fi .5s}
+#champ.on .cn{animation:pop .8s var(--pop),mtg 2s 1s ease-in-out infinite}
+/* 설정 */
+.vrow{transition:border-color .2s,transform .2s var(--ease)}.vrow:hover{border-color:#3a4050;transform:translateX(3px)}
+.vrow .vplay{transition:transform .15s}.vrow .vplay:active{transform:scale(.85)}
+/* 로딩 */
+.ldlogo{animation:lgin .9s var(--pop) both}
+.ldbar i{background-image:linear-gradient(90deg,#ffb100,#ffcf3f,#fff3c0),repeating-linear-gradient(-45deg,rgba(255,255,255,.25) 0 8px,transparent 8px 16px);background-blend-mode:overlay;background-size:100% 100%,32px 32px;animation:stripe .6s linear infinite}
+@keyframes stripe{to{background-position:0 0,32px 0}}
+/* 사운드 만드는 중 */
+#sgen{position:fixed;left:50%;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 66px);transform:translate(-50%,20px);z-index:8;opacity:0;pointer-events:none;background:rgba(13,15,21,.92);border:1px solid var(--ln);padding:6px 12px 8px;font:500 11px "Noto Sans KR",sans-serif;color:#aab1c3;min-width:170px;text-align:center;transition:opacity .4s,transform .4s var(--ease);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+#sgen.show{opacity:1;transform:translate(-50%,0)}
+#sgen i{display:block;height:2px;background:var(--ac);margin-bottom:5px;transition:width .3s;box-shadow:0 0 6px var(--ac)}
+#sgen.done{color:var(--ac)}
+body:not(.m) #sgen{bottom:auto;top:max(70px,env(safe-area-inset-top));opacity:.55;transform:translate(-50%,0) scale(.85)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}

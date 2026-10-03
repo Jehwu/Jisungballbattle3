@@ -1,0 +1,132 @@
+/* ===== ut.css : 언더테일 느낌 스타일 (검은 화면 · 흰 테두리 · 노란 선택 · 빨간 하트) ===== */
+:root{--ut-w:#ffffff;--ut-y:#ffff00;--ut-o:#ff7f27;--ut-r:#ff0000;--ut-bg:#000;--ut-f:"Galmuri11","Galmuri14","Noto Sans KR",sans-serif;--ut-p:"Press Start 2P","Galmuri11",monospace}
+html,body{background:#000}
+body.m{font-family:var(--ut-f)}
+/* 공통 상자 : 각진 흰 테두리 */
+.hb,.mc,.tile,.dsk,.slot,.btn,.vrow,.cbox,.dbar,#demod,.back,#vrow button,#mode button,#tsize button,.ts,.vreset,#dclose,#snd,#ctl button,.p{clip-path:none!important;border-radius:0!important}
+.scr,#menu{font-family:var(--ut-f)}
+.sh b{font:700 22px var(--ut-f);letter-spacing:.02em}
+.sh b:after{background:var(--ut-w);height:3px}
+.back{background:#000;border:3px solid var(--ut-w);font:400 14px var(--ut-p);color:var(--ut-w)}
+.back:active{border-color:var(--ut-y);color:var(--ut-y)}
+/* 메인 */
+#hub .logo,.ldlogo{font-family:var(--ut-p);font-size:clamp(20px,6.4vw,38px);line-height:1.35;letter-spacing:.04em;color:#fff;text-shadow:3px 3px 0 #2a2a2a}
+.logo span,.logo em{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:var(--ut-y)!important;animation:none!important;transform:none!important}
+.logo em{animation:utb 1.2s steps(2) infinite!important}
+@keyframes utb{50%{color:var(--ut-o)}}
+.logo:after{background:var(--ut-w);height:3px;animation:none}
+.sub{font:400 9px var(--ut-p)!important;letter-spacing:.3em!important;color:#aaa}
+.hb{background:#000!important;border:3px solid var(--ut-o)!important;color:var(--ut-o)!important;padding:16px 20px 16px 50px!important;box-shadow:none!important}
+.hb b{font:700 24px var(--ut-f)!important;letter-spacing:.05em}
+.hb small{font:400 10px var(--ut-p)!important;letter-spacing:.15em;color:inherit!important;opacity:.8}
+.hb.pri{animation:none}
+.hb.pri.uin{animation:uin .5s var(--ease) both;animation-delay:var(--d,0s)}
+.hb:before{display:none}
+.hb:hover,.hb.sel{border-color:var(--ut-y)!important;color:var(--ut-y)!important;transform:none}
+/* 모드 카드 */
+.mc{background:#000!important;border:3px solid var(--ut-w)!important;padding-left:44px!important}
+.mc i{font:400 14px var(--ut-p)!important;color:var(--ut-o)!important;-webkit-text-fill-color:currentColor;background:none!important}
+.mc b{font:700 22px var(--ut-f)}
+.mc small{font:400 12px var(--ut-f);color:#bbb}
+.mc:before{display:none}
+.mc.gold{border-color:var(--ut-y)!important}.mc.gold i{color:var(--ut-y)!important}
+.mc:hover,.mc.sel{border-color:var(--ut-y)!important;color:var(--ut-y);transform:none}
+/* 캐릭터 선택 */
+.slot{background:#000!important;border:3px solid var(--ut-w)!important}
+.slot:before{opacity:.12}
+.slot.on{border-color:var(--ut-y)!important;transform:none;animation:none}
+.slot.on small,.slot.on b{color:var(--ut-y)}
+.slot b{font:700 15px var(--ut-f)}
+.slot small{font:400 8px var(--ut-p)}
+.slot li{font-family:var(--ut-f)}
+.vsm{font:400 12px var(--ut-p)!important;color:var(--ut-w)!important;text-shadow:none!important;animation:utb2 1s steps(2) infinite}
+@keyframes utb2{50%{color:var(--ut-r)}}
+#vrow button{background:#000;border:2px solid #fff;color:#fff;font:700 12px var(--ut-f)}
+#vrow button.on{background:#000!important;color:var(--ut-y)!important;border-color:var(--ut-y)!important;animation:none}
+.rt{font:400 9px var(--ut-p)!important;color:#aaa}
+.rt span{color:var(--ut-y)!important;font:700 12px var(--ut-f)!important}
+#roster{border-top:3px solid #fff}
+.tile{background:#000!important;border:2px solid #555!important}
+.tile b{font:700 11px var(--ut-f)}
+.tile:hover{border-color:#fff!important;transform:none}
+.tile.act{border-color:var(--ut-y)!important;box-shadow:none;animation:none}
+.tile.act b{color:var(--ut-y)}
+.tile em{font-family:var(--ut-p)!important;font-size:7px!important}
+/* 버튼 */
+.btn{background:#000!important;border:3px solid var(--ut-o)!important;color:var(--ut-o)!important;font:400 12px var(--ut-p)!important;letter-spacing:.08em;padding:14px 18px}
+.btn.pri{border-color:var(--ut-y)!important;color:var(--ut-y)!important}
+.btn.pri:before{display:none}
+#start{animation:utp 1s steps(2) infinite}
+@keyframes utp{50%{border-color:var(--ut-o)!important;color:var(--ut-o)!important}}
+.btn:hover{transform:none;filter:none;color:var(--ut-y)!important;border-color:var(--ut-y)!important}
+/* 사전 */
+.dsk{background:#000!important;border:3px solid #fff!important}
+.dsk i{border:2px solid #fff!important;color:#fff!important;font:400 9px var(--ut-p)!important}
+.dsk b{font:700 15px var(--ut-f)}
+.dsk small{font:400 12px var(--ut-f);color:#ccc}
+.dsk em{font:400 8px/1.9 var(--ut-p)!important;color:var(--ut-y)!important}
+.dsk:after{content:"* 눌러서 미리보기";font:400 11px var(--ut-f);color:#888}
+.dsk.u{border-color:var(--ut-y)!important;background:#000!important}
+.dsk.u i{border-color:var(--ut-y)!important;color:var(--ut-y)!important}
+.dsk:hover{transform:none;border-color:var(--ut-y)!important}
+.dsk:hover b{color:var(--ut-y)}
+/* 설정 */
+.vrow{background:#000!important;border:2px solid #fff!important}
+.vh{font:400 10px var(--ut-p)!important;color:var(--ut-y)!important}
+.vrow input{accent-color:var(--ut-y)}
+.vreset{background:#000;border:3px solid var(--ut-o);color:var(--ut-o);font:700 14px var(--ut-f)}
+/* 확인창 · 데모 · 결과 */
+.cbox{background:#000!important;border:4px solid #fff!important}
+.cbox b{font:700 20px var(--ut-f)}
+.cbox small{font-family:var(--ut-f)}
+.dbar{background:#000!important;border:3px solid #fff!important}
+.dbar small{font:400 8px var(--ut-p)!important}
+.dbar b{font-family:var(--ut-f)}
+#demod{background:#000!important;border:3px solid #fff;font-family:var(--ut-f)}
+#demod:before{content:"* ";color:#fff}
+#dclose{background:#000;border:2px solid #fff}
+#msg{background:rgba(0,0,0,.88)}
+#msg:before{opacity:.25}
+#mt{font-family:var(--ut-f)!important;font-weight:700}
+#mt small{font:400 10px var(--ut-p)!important;color:var(--ut-y)!important}
+#snd,#ctl button{background:#000!important;border:2px solid #fff!important}
+#ctl #bskip{border-color:var(--ut-y)!important;color:var(--ut-y)}
+/* HUD : 언더테일 HP 바 */
+.p{background:rgba(0,0,0,.88)!important;border:2px solid #fff!important;border-top:2px solid var(--c)!important}
+.nm b{font-family:var(--ut-f)}
+.nm em{font-family:var(--ut-p)!important;font-size:11px!important}
+.nm em:before{content:"HP ";font-size:8px;color:#fff}
+.bar{transform:none!important;background:#b00000!important;height:9px}
+.bar u{background:#ff8080!important}
+.bar i{background:var(--ut-y)!important}
+.p.low .bar i{animation:none}
+.chip{border-radius:0;font-family:var(--ut-p)!important;font-size:6px!important;background:#000;border:1px solid #fff}
+.chip.rdy{background:var(--ut-y)!important;border-color:var(--ut-y)!important}
+/* 로딩 */
+#ld{background:#000!important}
+.ldbar{transform:none!important;border:3px solid #fff;background:#000;height:16px}
+.ldbar i{background:var(--ut-y)!important;box-shadow:none!important;animation:none!important}
+#ldpct{font-family:var(--ut-p)!important;font-size:14px!important;color:var(--ut-y)!important}
+#ldtxt,#ldtip{font-family:var(--ut-f)!important}
+#ldtip:before{content:"* "}
+#ldgo{font-family:var(--ut-f)!important;font-weight:700;animation:utb3 .8s steps(2) infinite}
+@keyframes utb3{50%{opacity:.2}}
+#sgen{background:#000;border:2px solid #fff;font-family:var(--ut-f);clip-path:none}
+#sgen i{background:var(--ut-y);box-shadow:none}
+/* 영혼 하트 커서 */
+#soul{position:fixed;left:0;top:0;width:18px;height:16px;z-index:20;pointer-events:none;opacity:0;transition:transform .16s steps(4),opacity .15s}
+#soul.on{opacity:1}
+#soul svg{display:block;width:100%;height:100%;filter:drop-shadow(0 0 3px rgba(255,0,0,.6));animation:soulb .9s ease-in-out infinite}
+@keyframes soulb{50%{transform:translateX(-2px)}}
+/* 메인 대사창 */
+#utbox{border:4px solid #fff;background:#000;padding:12px 14px;min-height:72px;font:400 15px/1.6 var(--ut-f);color:#fff;margin:0 4%;white-space:pre-wrap}
+#utbox:after{content:"▮";animation:utb3 .6s steps(2) infinite;margin-left:2px}
+/* 전투 시작 하트 연출 */
+#utflash{position:fixed;inset:0;z-index:30;background:#000;display:none;pointer-events:none}
+#utflash.on{display:block;animation:utfo .9s steps(1) forwards}
+#utflash svg{position:absolute;left:50%;top:55%;width:36px;height:32px;margin:-16px 0 0 -18px;animation:uthb .54s steps(1) 0s 1,uthm .3s .55s ease-in forwards}
+@keyframes uthb{0%,33%,66%{opacity:1}16%,50%,83%{opacity:0}}
+@keyframes uthm{to{transform:translate(0,-40vh) scale(.5);opacity:0}}
+@keyframes utfo{0%,85%{opacity:1}100%{opacity:0}}
+.mc.gold b,.mc.gold small{color:var(--ut-y)!important;-webkit-text-fill-color:currentColor!important;background:none!important}
+.mc.gold small{color:#d8d880!important}
