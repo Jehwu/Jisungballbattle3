@@ -60,7 +60,7 @@
 <script>
 // js 파일을 차례로 불러옴 : js 폴더에 없으면 index.html 옆에서 다시 찾음
 (function(){
-  var L=['core1','core2','core3','chars1','chars2','extra','voice','gev1','gev2','gev3','sound'],i=0,bad=[];
+  var L=['core1','core2','core3','chars1','chars2','extra','extra2','extra3','extra4','voice','gev1','gev2','gev3','sound'],i=0,bad=[];
   function err(m){var d=document.getElementById('lderr');d.style.display='block';d.textContent+=m+'\n'}
   window.addEventListener('error',function(e){if(e.message)err('오류: '+e.message+(e.filename?' ('+e.filename.split('/').pop()+' '+e.lineno+'줄)':''))});
   function load(n,dirs){if(!dirs.length){bad.push(n+'.js');err('못 찾은 파일: '+n+'.js');next();return}

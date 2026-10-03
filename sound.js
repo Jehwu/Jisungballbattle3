@@ -192,12 +192,72 @@ function wav(x,pk){fade(x,.003,.05);const s=(pk||.89)/peak(x),n=x.length,b=new A
   w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,SR,true);v.setUint32(28,SR*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
   for(let i=0;i<n;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,x[i]*s))*32767,true);return b}
 function dataURI(buf){const u=new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return 'data:audio/wav;base64,'+btoa(s)}
-const PK={ge_punch:.75,ge_launch:.8,h_flicker:.75,juggle:.7,whistle:.7,tv_gallop:.8,wm_gem:.75,rd_head:.7,rd_beep:.6,th_coin:.7};
+const PK={wk_strike:.75,wk_hit:.8,pc_shape:.7,pc_trap:.75,ge_punch:.75,ge_launch:.8,h_flicker:.75,juggle:.7,whistle:.7,tv_gallop:.8,wm_gem:.75,rd_head:.7,rd_beep:.6,th_coin:.7};
 function use(n,buf){
   if(AUD[n]&&AUD[n].ok)return;            // sounds 폴더에 진짜 파일이 있으면 그걸 사용
   let url;try{url=URL.createObjectURL(new Blob([buf],{type:'audio/wav'}))}catch(e){url=dataURI(buf)}
   const pool=new SoundPool(url,3);pool.pool.forEach(a=>a.addEventListener('error',()=>{if(a.src.indexOf('data:')!=0){a.src=dataURI(buf);a.bad=0;a.load()}},{once:true}));AUD[n]=pool;
 }
+// ===== 원숭이왕 (중국풍) · 피카소 (스케치) =====
+function pluck(f,d,br,dec){const n=Math.max(2,Math.round(SR/f)),b=new Float32Array(n);for(let i=0;i<n;i++)b[i]=R()*2-1;const x=Z(d),s=.5-.42*br,fb=Math.pow(.001,1/(f*(dec||1)));let k=0;
+  for(let i=0;i<x.length;i++){const j=(k+1)%n;x[i]=b[k];b[k]=fb*((1-s)*b[k]+s*b[j]);k=j}return x}
+function zheng(f,d,bend){let ph=0;const x=T(d,t=>{ph+=PI2*f*(1+(bend||0)*(1-Math.exp(-t*9)))/SR;return(Math.sin(ph)+.5*Math.sin(ph*2)*Math.exp(-t*3)+.3*Math.sin(ph*3)*Math.exp(-t*5)+.18*Math.sin(ph*4)*Math.exp(-t*8))*Math.exp(-t*2.6)*Math.min(1,t/.003)});place(x,ed(bp(noise(.02),1500,6000),150),0,.25);return x}
+function gong(f,d,bend,bright){const rs=[1,1.52,2.08,2.69,3.32,4.1,5.2,6.3],x=Z(d);rs.forEach((r,k)=>{const fr=f*r*(1+U(-.006,.006)),am=1/(1+k*.55),dec=.7+k*.35;let ph=0;
+  for(let i=0;i<x.length;i++){const t=i/SR,bl=k>2?Math.min(1,t/(.06+k*.03))*(bright||1):1;ph+=PI2*fr*(1+bend*(1-Math.exp(-t*4)))/SR;x[i]+=Math.sin(ph)*am*bl*Math.exp(-t*dec)}});place(x,ed(lp(noise(.06),500),40),0,.6);return x}
+const clap=()=>{const x=ed(bp(noise(.05),1200,5200),110);add(x,ed(sine(1750,.05),70),.6);add(x,ed(sine(2650,.05),95),.35);return x};
+const cymb=d=>{const x=ed(hp(noise(d),3200),3.2);for(let k=0;k<14;k++)add(x,ed(sine(U(3000,8500),d),U(3,7)),.04);return x};
+function dizi(notes){const d=notes.reduce((m,n)=>Math.max(m,n[1]+n[2]),0)+.1,x=Z(d);notes.forEach(([f,at,du])=>{let ph=0;const y=T(du,t=>{ph+=PI2*f*(1+.006*Math.sin(PI2*5.5*t)*Math.min(1,t/.15))/SR;return(Math.sin(ph)+.22*Math.sin(ph*2)+.06*Math.sin(ph*3))*Math.min(1,t/.025)*Math.min(1,(du-t)/.04)});
+  add(y,mul(bp(noise(du),f*1.5,f*3),t=>.12*Math.min(1,(du-t)/.04)));place(x,y,at,1)});return x}
+function erhu(f0,f1,d,vib){let ph=0;const y=T(d,t=>{const f=f0+(f1-f0)*Math.min(1,t/(d*.35));ph+=f*(1+(vib||.012)*Math.sin(PI2*6*t)*Math.min(1,t/.2))/SR;return 2*(ph%1)-1});return mul(bp(y,500,3200),t=>Math.min(1,t/.06)*Math.min(1,(d-t)/.12))}
+const PENT=[587.33,659.25,739.99,880,987.77,1174.66,1318.5,1479.98,1760];
+G.wk_cloud=()=>{const buf=Z(1.1);place(buf,mul(movBP(noise(.5),400,3500,.25),t=>.6*Math.sin(Math.PI*t/.5)),0,1);
+  place(buf,dizi([[PENT[0],.05,.07],[PENT[1],.11,.07],[PENT[2],.17,.07],[PENT[3],.23,.07],[PENT[4],.29,.07],[PENT[5],.35,.42]]),0,.55);place(buf,cymb(.6),.33,.12);return verb(buf,1.1,.35,7000)};
+G.wk_swoop=()=>{const buf=Z(.45);place(buf,mul(movBP(noise(.4),700,2600,.2),t=>.8*Math.pow(Math.sin(Math.PI*t/.4),1.5)),0,1);place(buf,mul(lp(noise(.4),400),t=>.4*Math.sin(Math.PI*t/.4)),0,1);return verb(buf,.4,.15,6000)};
+G.wk_hit=()=>{const buf=Z(.35);place(buf,sat(ed(sweepEnv(230,70,.14),30),2.5),0,1);place(buf,ed(bp(noise(.05),1000,5000),80),0,.8);place(buf,clap(),0,.55);place(buf,ed(T(.3,t=>Math.sin(PI2*2310*t)+.6*Math.sin(PI2*3470*t)),16),0,.08);return verb(buf,.35,.15,6000)};
+G.wk_hair=()=>{const buf=Z(.9);place(buf,mul(bp(noise(.4),300,2200),t=>.55*Math.min(1,t/.05)*Math.exp(-t*5)),0,1);[880,987.77,1174.66,1318.5,1760].forEach((f,i)=>place(buf,pluck(f,.6,.75,.9),.14+i*.05,.32));return verb(buf,.8,.3,7000)};
+G.wk_clone=()=>{const buf=Z(1.2);for(let k=0;k<5;k++)place(buf,ed(lp(noise(.12),1400),22),k*.035,.5);place(buf,gong(620,1,.06,.8),.05,.32);place(buf,clap(),.02,.5);place(buf,clap(),.2,.35);return verb(buf,.9,.3,6000)};
+G.wk_strike=()=>{const buf=Z(.25);place(buf,clap(),0,.8);place(buf,sat(ed(sweepEnv(180,60,.1),35),2),0,.7);place(buf,ed(bp(noise(.03),700,3500),110),0,.5);return verb(buf,.25,.1,6000)};
+G.wk_ult=()=>{const d=3,buf=Z(d);let at=0,sp=.17;for(let k=0;k<9;k++){place(buf,clap(),at,.5+k*.05);at+=sp;sp*=.8}
+  place(buf,gong(150,2.4,-.05,1.2),.78,1.1);place(buf,cymb(1.6),.78,.5);place(buf,sat(ed(sweepEnv(120,50,.4),8),2),.78,.8);place(buf,ed(lp(noise(.3),300),10),.78,.6);
+  place(buf,erhu(523.25,783.99,1.3,.02),.95,.22);place(buf,erhu(659.25,987.77,1.2,.02),1.0,.12);return verb(buf,2,.4,5000)};
+G.wk_grow=()=>{const d=1.1,buf=Z(d);place(buf,sat(mul(sweepEnv(110,880,.95,2.2),t=>.4*Math.min(1,t/.05)*Math.min(1,(.95-t)/.1)),1.8),0,1);place(buf,mul(lp(noise(d),200),t=>.7*Math.min(1,t/.2)*Math.exp(-t*1.5)),0,1);
+  PENT.slice(0,7).forEach((f,i)=>place(buf,zheng(f,.5,.01),.08+i*.1,.2));place(buf,ed(T(.6,t=>Math.sin(PI2*1980*t)+.7*Math.sin(PI2*2970*t)),7),.85,.12);return verb(buf,1.2,.35,6000)};
+G.wk_spin=()=>{const d=2.5,buf=Z(d);place(buf,mul(lp(noise(d),500),t=>.55*Math.pow(Math.sin(Math.PI*Math.min(1,t/2.2)),.8)),0,1);
+  [.68,1.05,1.42,1.9].forEach((at,k)=>{const L=.42-k*.04;place(buf,mul(movBP(noise(L),300,1600+k*300,.2),t=>Math.pow(Math.sin(Math.PI*t/L),2)),at-L/2,.85)});place(buf,cymb(.8),2.0,.25);return verb(buf,1.3,.3,4500)};
+G.wk_gold=()=>{const buf=Z(1.4);place(buf,gong(880,1.2,.08,.7),0,.35);[1174.66,1479.98,1760,2349.3].forEach((f,i)=>place(buf,bell(f,1,4),.04+i*.05,.22));place(buf,mul(choir([146.83,220,293.66],1.1,.9),t=>.35*Math.min(1,t/.1)*Math.exp(-t*2)),0,1);return verb(buf,1.4,.4,7000)};
+// --- 피카소 ---
+function scrib(d,rate,c1,c2){const x=Z(d);let t0=0,up=0;while(t0<d-.03){const L=U(.7,1.3)/rate;const y=mul(bp(noise(L),up?c1:c2,(up?c1:c2)*2.2),t=>Math.pow(Math.sin(Math.PI*t/L),.7)*(.55+.45*(R()<.3?1:R())));place(x,y,t0,up?.8:1);
+  for(let k=0;k<L*90;k++)place(x,ed(hp(noise(.004),3000),900),t0+U(0,L),U(.05,.25));t0+=L*.92;up^=1}return x}
+G.pc_pencil=()=>{const buf=Z(.75);add(buf,scrib(.7,9,2600,3800),.9);place(buf,mul(bp(noise(.7),500,1300),t=>.1*Math.sin(Math.PI*t/.7)),0,1);return verb(buf,.3,.1,8000)};
+G.pc_trap=()=>{const buf=Z(.6);place(buf,ed(hp(noise(.01),2500),400),0,.8);place(buf,ed(sine(1500,.04),80),0,.3);place(buf,mul(movBP(noise(.18),1500,5000,.2),t=>.5*Math.pow(t/.18,2)),.02,1);place(buf,ed(sweepEnv(300,900,.12),25),.2,.6);place(buf,ed(bp(noise(.04),600,2500),60),.2,.5);return verb(buf,.5,.2,7000)};
+G.pc_color=()=>{const buf=Z(1.1);place(buf,sat(ed(sweepEnv(140,45,.25),14),2),0,.8);place(buf,mul(movBP(noise(.5),3500,350,.25),t=>Math.min(1,t/.01)*Math.exp(-t*7)),0,.9);
+  for(let k=0;k<9;k++){const at=U(.02,.35),f0=U(250,700);place(buf,ed(sweepEnv(f0,f0*2.4,.06),40),at,.25)}[523.25,659.25,783.99,1046.5].forEach((f,i)=>place(buf,bell(f,.7,5),.05+i*.03,.18));return verb(buf,.8,.3,7000)};
+G.pc_shape=()=>{const buf=Z(.3);place(buf,ed(sweepEnv(420,1250,.09,.6),26),0,.7);place(buf,ed(bp(noise(.02),1500,5000),160),0,.5);place(buf,ed(sine(1900,.08),50),.005,.15);return verb(buf,.3,.15,8000)};
+G.pc_cube=()=>{const buf=Z(1);[0,.08,.15,.27].forEach((at,i)=>{place(buf,ed(bp(noise(.035),1400,5500),120),at,.7);const f=[466.16,659.25,349.23,987.77][i];place(buf,ed(T(.25,t=>Math.sin(PI2*f*t)+.3*Math.sin(PI2*f*4*t)*Math.exp(-t*40)),22),at,.4)});
+  place(buf,mul(sweepEnv(1800,600,.35,.5),t=>.1*Math.sin(Math.PI*t/.35)),.3,1);place(buf,ed(T(.6,t=>Math.sin(PI2*2093*t)+Math.sin(PI2*2960*t)),6),.3,.1);return verb(buf,.8,.3,8000)};
+G.pc_canvas=()=>{const buf=Z(1.4);place(buf,mul(lp(noise(.6),700),t=>.5*Math.sin(Math.PI*t/.6)),0,1);place(buf,mul(bp(noise(.55),900,6000),t=>.5*(.5+.5*Math.sin(PI2*(26-30*t)*t))*Math.sin(Math.PI*t/.55)),0,1);
+  place(buf,ed(lp(noise(.12),300),20),.5,.8);place(buf,ed(sine(70,.2),15),.5,.5);[261.63,329.63,392,493.88,523.25].forEach((f,i)=>place(buf,bell(f,.9,3),.52+i*.07,.17));return verb(buf,1.2,.35,7000)};
+G.pc_brush=()=>{const d=.55,buf=Z(d);place(buf,mul(movBP(noise(.45),700,2600,.35),t=>.8*Math.min(1,t/.04)*Math.pow(Math.max(0,1-t/.45),.8)*(.7+.3*Math.sin(PI2*17*t))),0,1);place(buf,mul(lp(noise(.45),350),t=>.35*Math.sin(Math.PI*t/.45)),0,1);
+  for(let k=0;k<5;k++){const f0=U(220,480);place(buf,ed(sweepEnv(f0,f0*1.8,.05),45),U(.05,.35),.12)}return verb(buf,.4,.15,6000)};
+G.pc_sign=()=>{const buf=Z(.9);add(buf,scrib(.42,16,3000,4400),.8);place(buf,bell(1318.5,.5,6),.42,.3);place(buf,bell(1975.5,.45,7),.45,.18);return verb(buf,.6,.25,8000)};
+G.pc_splash=()=>{const buf=Z(1.6);place(buf,sat(ed(sweepEnv(110,32,.6),6),2.5),0,1);for(let k=0;k<3;k++)place(buf,mul(movBP(noise(.45),4000,300,.25),t=>Math.min(1,t/.01)*Math.exp(-t*6)),k*.06,.6);
+  for(let k=0;k<14;k++){const f0=U(250,800);place(buf,ed(sweepEnv(f0,f0*2.2,.07),35),U(.03,.6),.18)}[523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>place(buf,bell(f,.9,3.5),.1+i*.06,.2));return verb(buf,1.2,.35,7000)};
+// ===== 권루티비 사운드 업그레이드 =====
+G.kr_charge=()=>{const buf=Z(.7);place(buf,mul(sweepEnv(220,1100,.42,1.6),t=>.35*Math.pow(t/.42,1.5)),0,1);place(buf,mul(sweepEnv(330,1650,.42,1.6),t=>.15*Math.pow(t/.42,1.5)),0,1);
+  place(buf,mul(movBP(noise(.42),500,6000,.25),t=>.35*Math.pow(t/.42,2)),0,1);for(let k=0;k<8;k++)place(buf,bell(U(1500,3500),.25,14),U(.05,.4),.09);place(buf,bell(1318.5,.35,8),.4,.25);return verb(buf,.6,.25,8000)};
+G.kr_pass=()=>{const d=.6,buf=Z(d);place(buf,mul(movBP(noise(d),900,3200,.18),t=>.85*Math.sin(Math.PI*t/d)*(.55+.45*Math.sin(PI2*16*t))),0,1);place(buf,mul(sweepEnv(700,1100,d,1),t=>.12*Math.sin(Math.PI*t/d)*(.5+.5*Math.sin(PI2*16*t))),0,1);return verb(buf,.5,.2,7000)};
+G.kr_stamp=()=>{const buf=Z(.7);place(buf,sat(ed(sweepEnv(150,42,.3),11),3),0,1);place(buf,ed(lp(noise(.2),900),24),0,.9);place(buf,ed(bp(noise(.05),1200,5000),90),0,.5);
+  place(buf,mul(sweepEnv(420,180,.3,.6),t=>.25*Math.exp(-t*8)*(1+.6*Math.sin(PI2*28*t))),.04,1);place(buf,bell(1046.5,.4,8),.03,.12);return verb(buf,.6,.25,5000)};
+G.kr_beat=()=>{const buf=Z(.45);place(buf,sat(ed(sweepEnv(130,45,.22),13),2.4),0,1);place(buf,ed(bp(noise(.03),2000,9000),110),0,.3);
+  place(buf,add(ed(bp(noise(.16),1200,7000),22),ed(sine(190,.12),28),.6),.2,.75);place(buf,ed(hp(noise(.03),7000),120),.1,.25);place(buf,ed(hp(noise(.03),7000),120),.3,.2);
+  place(buf,mul(saw(55,.38,6),t=>.35*Math.exp(-t*6)),0,1);return verb(buf,.3,.12,7000)};
+G.kr_swap=()=>{const d=.42,buf=Z(d);let ph=0;const sc=T(d,t=>{const u=t/d,sp=Math.sin(PI2*(u<.5?3:5)*t*2.2);ph+=PI2*(260+620*Math.abs(sp))*(sp>0?1:.7)/SR;return(2*((ph/PI2)%1)-1)*Math.pow(Math.sin(Math.PI*u),.6)});
+  place(buf,bp(sc,300,3800),0,.7);place(buf,mul(movBP(noise(d),600,4500,.2),t=>.4*Math.sin(Math.PI*t/d)),0,1);place(buf,ed(sweepEnv(900,220,.15),20),.25,.3);return verb(buf,.35,.15,6000)};
+G.kr_shutter=()=>{const buf=Z(.5);[0,.085].forEach((at,i)=>{place(buf,ed(bp(noise(.025),1800,9000),180),at,i?.6:.9);place(buf,ed(T(.04,t=>Math.sin(PI2*(i?3200:4200)*t)),140),at,.25);place(buf,ed(lp(noise(.03),600),90),at,.4)});
+  place(buf,mul(T(.18,t=>Math.sign(Math.sin(PI2*90*t))),t=>.06*Math.sin(Math.PI*t/.18)),.12,1);return verb(buf,.3,.12,9000)};
+G.kr_tear=()=>{const d=.5,buf=Z(d);const n=bp(noise(d),900,7000),env=Z(d);let v=0;for(let i=0;i<env.length;i++){if(R()<.004)v=U(.4,1);v*=.9985;env[i]=v}
+  for(let i=0;i<n.length;i++){const t=i/SR;n[i]*=env[i]*Math.pow(Math.sin(Math.PI*Math.min(1,t/d)),.4)*(.6+.4*R())}place(buf,n,0,1.2);
+  for(let k=0;k<30;k++)place(buf,ed(hp(noise(.006),2500),600),U(0,.45),U(.1,.4));place(buf,ed(lp(noise(.08),500),30),.0,.3);return verb(buf,.35,.12,8000)};
 window.GENSFX=Object.keys(G);
 function run(){const L=Object.keys(G);let i=0;const nx=()=>{if(i>=L.length)return;const n=L[i++];try{if(!(AUD[n]&&AUD[n].ok)&&!(window.GECLIP&&GECLIP[n])){seed=7+i*101;use(n,wav(G[n](),PK[n]))}}catch(e){SERR='효과음 생성 실패: '+n}setTimeout(nx,30)};nx()}
 setTimeout(run,900);
